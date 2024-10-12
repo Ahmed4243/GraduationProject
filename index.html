@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="renderer.js" defer></script> <!-- Link to your renderer file -->
 </head>
 <body>
-    <h1>HTML</h1>
+    <div class="flex-container">
+      <a href="view.php">
+        <div class="card">
+          <div class="card-details">
+            <p class="text-title">New Project</p>
+            <p class="text-body">Create a new data science project</p>
+          </div>
+          <button class="card-button">More info</button>            
+        </div>
+      </a>
+          <a href="input.php">
+            <div class="card">
+              <div class="card-details">
+                <p class="text-title">Import Existing Project</p>
+                <p class="text-body">Import an existing project</p>
+              </div>
+              <button class="card-button">More info</button>            
+            </div>
+          </a>
+    </div>
 </body>
 </html>

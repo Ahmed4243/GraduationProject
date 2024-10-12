@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* Optional: Add some styles for better appearance */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        button {
+            margin-top: 10px; /* Space between buttons and the table */
+        }
+    </style>
+</head>
+<body>
+    <h1>Dynamic Table</h1>
+    <table id="dynamicTable">
+        <thead>
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td><button class="remove-row">-</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button id="addRow">+</button>
+</body>
+</html>
