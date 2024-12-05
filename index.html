@@ -5,31 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="renderer.js" defer></script> <!-- Link to your renderer file -->
+    <script src="renderer.js" defer></script>
 </head>
 <body>
   <div class="sidebar">
-    
+    <div class="block">
+      <img src="images/home.svg" width="30%" height="30%">
+    </div>
+    <div class="block">
+      <img src="images/file.svg" width="30%" height="30%">
+    </div>
+    <div class="block">
+      <img src="images/folder.svg" width="30%" height="30%">
+    </div>
+    <hr style="width: 80%;">
+    <div class="block">
+      <img src="images/settings.svg" width="30%" height="30%">
+    </div>
   </div>
     <div class="flex-container">
       <a href="newProject.html">
         <div class="card">
           <div class="card-details">
-            <p class="text-title">New Project</p>
-            <p class="text-body">Create a new data science project</p>
+            <img src="images/hamburger.png" width="100%">
           </div>
-          <button class="card-button">More info</button>            
+          <button class="card-button">New Project</button>            
         </div>
       </a>
-          <a href="input.php">
-            <div class="card">
-              <div class="card-details">
-                <p class="text-title">Import Existing Project</p>
-                <p class="text-body">Import an existing project</p>
-              </div>
-              <button class="card-button">More info</button>            
-            </div>
-          </a>
+
+    </div>
+    <p style="text-align: center;">Presets</p>
+    <hr style=" position: relative; width:30%; left: 10;">
+
+    <div class="flex-container">
+      <a href="input.php">
+        <div class="card">
+          <div class="card-details">
+            <img src="images/line-chart.png" width="100%" height="100%">
+          </div>
+          <button class="card-button">Visualization</button>            
+      </div>
+      </a>
+      <a href="input.php">
+        <div class="card">
+          <div class="card-details">
+            <img src="images/data.png" width="100%">
+          </div>
+          <button class="card-button">Analysis</button>            
+      </div>
+      </a>
+      <a href="input.php">
+        <div class="card">
+          <div class="card-details">
+          <img src="images/computer.png" width="100%">
+          </div>
+          <button class="card-button">Info</button>            
+      </div>
+      </a>   
     </div>
 </body>
 </html>

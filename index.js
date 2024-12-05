@@ -15,6 +15,7 @@ const createWindow = () => {
     // Create a custom menu
     const menu = Menu.buildFromTemplate([
         {
+            color: '#217346',
             label: 'File',
             submenu: [
                 {
