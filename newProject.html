@@ -44,6 +44,54 @@
             transition: 0.5s ease-out;
             position: relative;
         }
+        .block {
+        margin-bottom: 20px;
+        position: relative; /* For popup positioning */
+    }
+
+    /* Insert text styling */
+    .block h1 {
+        color: white;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.5em;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    /* Popup menu styling */
+    .popup-menu {
+        display: none; /* Hidden by default */
+        position: absolute;
+        top: 0; /* Align with the top of "Insert" */
+        left: 100%; /* Position to the right of "Insert" */
+        background-color: white;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        padding: 20px; /* Increased padding for a larger menu */
+        width: 200px; /* Set the width to make the popup bigger */
+        z-index: 10;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.4em; /* Increased font size */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    /* Popup menu items */
+    .popup-menu a {
+        display: block;
+        color: #34495e;
+        text-decoration: none;
+        margin: 10px 0; /* Increased margin for better spacing */
+        font-size: 1.1em; /* Larger font size for items */
+    }
+
+    .popup-menu a:hover {
+        color: #00bfff; /* Highlight text on hover */
+    }
+
+    /* Show the popup menu on hover */
+    .block:hover .popup-menu {
+        display: block;
+    }
     </style>
 </head>
 <body>
@@ -55,7 +103,12 @@
         </div>
         <hr style="width: 80%;">
         <div class="block">
-            <h1>Insert</h1>    
+            <h1>Insert</h1>
+            <div class="popup-menu">
+                <a href="#">DataFrame</a>
+                <a href="#">Add Rows</a>
+                <a href="#">Add Columns</a>
+            </div>
         </div>
         <div class="block">
             <h1>Analysis</h1>    
@@ -68,14 +121,15 @@
         </div>
         <hr style="width: 80%;">
         <div class="block">
-            <a href="index.html" style="text-align: center;">
+            <a href="" style="text-align: center;">
                 <img src="images/settings.svg" width="20%" height="20%">
             </a>        
         </div>
     </div>
 
     <div class="main-content">
-        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Add Data To Your Report</p>
+        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
+        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
         <div class="flex-container1">
             <div class="card" style="background-color: #2173465b ">
                 <div class="card-details">
