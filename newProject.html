@@ -3,41 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">
     <style>
-        /* Optional: Add some styles for better appearance */
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
+
+        .main-content {
+            margin-left: 300px; /* Offset to exclude the sidebar */
+            display: flex;
+            flex-direction: column; /* Stack the heading and the cards */
+            align-items: center; /* Center-align content horizontally */
+            padding: 20px;
         }
-        button {
-            margin-top: 10px; /* Space between buttons and the table */
+
+        h1 {
+            color: white; /* Adjust color for better visibility */
+        }
+
+        .flex-container1 {
+            display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap */
+            justify-content: center; /* Center cards horizontally */
+            align-items: center;
+            gap: 20px; /* Space between cards */
+            width: 100%; /* Ensure the container spans full width */
+        }
+
+        .card {
+            width: 150px;
+            height: 200px;
+            border-radius: 20px;
+            background: #f5f5f5;
+            border: 2px solid #c3c6ce;
+            transition: 0.5s ease-out;
+            position: relative;
         }
     </style>
 </head>
 <body>
-    <h1>Dynamic Table</h1>
-    <table id="dynamicTable">
-        <thead>
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td><button class="remove-row">-</button></td>
-            </tr>
-        </tbody>
-    </table>
-    <button id="addRow">+</button>
+    <div class="sidebar" style="width: 300px;">
+        <div class="block">
+            <a href="index.html" style="text-align: center;">
+                <img src="images/home.svg" width="20%" height="20%">
+            </a>
+        </div>
+        <hr style="width: 80%;">
+        <div class="block">
+            <h1>Insert</h1>    
+        </div>
+        <div class="block">
+            <h1>Analysis</h1>    
+        </div>
+        <div class="block">
+            <h1>Visualization</h1>
+        </div>
+        <div class="block">
+            <h1>Cleaning</h1>    
+        </div>
+        <hr style="width: 80%;">
+        <div class="block">
+            <a href="index.html" style="text-align: center;">
+                <img src="images/settings.svg" width="20%" height="20%">
+            </a>        
+        </div>
+    </div>
+
+    <div class="main-content">
+        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Add Data To Your Report</p>
+        <div class="flex-container1">
+            <div class="card" style="background-color: #2173465b ">
+                <div class="card-details">
+                    <img src="images/excel.svg" style="height: 100%; width: 100%;">
+                </div>
+                <button class="card-button">Import from Excel</button>          
+            </div>
+            <div class="card" style="background-color: #fff2005b ">
+                <div class="card-details">
+                    <img src="images/sql-database.svg" alt="" style="height: 100%; width: 100%;">
+                </div>
+                <button class="card-button">Import from SQL</button>          
+            </div>
+            <div class="card" style="background-color: #6b460075 ">
+                <div class="card-details">
+                    <img src="images/powerbi.svg" alt="" style="height: 100%; width: 100%;">
+                </div>
+                <button class="card-button">Import from PowerBI</button>          
+            </div>
+            <div class="card" style="background-color: #6c6c6c32 ">
+                <div class="card-details">
+                    <img src="images/sample.svg"alt="" style="height: 100%; width: 100%;">
+                </div>
+                <button class="card-button">Import Sample Data</button>          
+            </div>
+        </div>
+        <a href="" style="text-decoration: none;"><p style="color: #00bfff; font-size: 1.5em;">Get data from another source →</p></a>
+    </div>
 </body>
 </html>
