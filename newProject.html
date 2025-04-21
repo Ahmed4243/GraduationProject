@@ -95,7 +95,7 @@
             border-radius: 5px;
             padding: 20px;
             width: 230px;
-            z-index: 10;
+            z-index: 1000;
             font-family: 'Open Sans', sans-serif;
             font-size: 1.4em; 
             white-space: nowrap;
@@ -196,6 +196,33 @@
         .context-menu div:hover {
             background-color: #f0f0f0;
         }
+        .row-number {
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            text-align: center;
+            background-color: #f0f0f0 !important;
+            user-select: none;
+        }
+        #dynamicTable th:first-child,
+        #dynamicTable td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            background-color: #117c9f;
+            box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
 
     </style>
 </head>
@@ -211,8 +238,6 @@
             <h1>Insert</h1>
             <div class="popup-menu">
                 <a href="#" id="showDataFrameLink">DataFrame</a>
-                <a href="#">Add Rows</a>
-                <a href="#">Add Columns</a>
             </div>
         </div>
         <div class="block">
@@ -271,17 +296,19 @@
         </div>
 
         <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
-            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Create DataFrame</p>
+            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Untitled Project</p>
 
             <div style="display: flex; align-items: flex-start; width: auto; justify-content: center;">
                 <table id="dynamicTable" border="1">
                     <thead>
                         <tr>
+                            <th class="row-number"></th>
                             <th contenteditable="true" style="background-color: #0d8bf1; font-weight: bold;">Feature 1</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <td class="row-number">1</td>
                             <td contenteditable="true"></td>
                         </tr>
                     </tbody>
@@ -294,8 +321,12 @@
             <div id="stats-sections-container"></div>
         </div>
 
-    </div> <div id="column-context-menu" class="context-menu">
+    </div> 
+    <div id="column-context-menu" class="context-menu">
         <div id="remove-column-option">Remove Column</div>
+    </div>
+    <div id="row-context-menu" class="context-menu">
+        <div id="remove-row-option">Delete Row</div>
     </div>
 
 
@@ -313,9 +344,28 @@
            return Math.sqrt(variance);
        }
 
+       function updateRowNumbers() {
+           const rows = document.querySelectorAll('#dynamicTable tbody tr');
+           rows.forEach((row, index) => {
+               row.querySelector('.row-number').textContent = index + 1;
+           });
+       }
+
+       function updateFeatureNames() {
+           const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+           let featureCount = 1;
+           
+           headers.forEach((header) => {
+               if (/^Feature \d+$/.test(header.textContent)) {
+                   header.textContent = `Feature ${featureCount}`;
+               }
+               featureCount++;
+           });
+       }
+
         function updateColumnSelect() {
            const allSelects = document.querySelectorAll('#stats-sections-container select');
-           const headerCells = document.querySelectorAll('#dynamicTable thead th');
+           const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
 
            allSelects.forEach(select => {
                const currentSelectedIndex = select.selectedIndex;
@@ -336,7 +386,7 @@
                     const isSecondCorrelationSelect = select.parentElement &&
                                                    select.parentElement.querySelector('label:first-of-type') &&
                                                    select.parentElement.querySelector('label:first-of-type').textContent.includes('Column 1') && 
-                                                   select.previousElementSibling && select.previousElementSibling.tagName === 'LABEL' && select.previousElementSibling.textContent.includes('Column 2'); /* Check if label before it is Col 2 */
+                                                   select.previousElementSibling && select.previousElementSibling.tagName === 'LABEL' && select.previousElementSibling.textContent.includes('Column 2'); 
 
                    if (isSecondCorrelationSelect && select.options.length > 1) {
                         select.selectedIndex = 1;
@@ -363,9 +413,11 @@
             const statsSectionsContainer = document.getElementById('stats-sections-container');
             const columnContextMenu = document.getElementById('column-context-menu');
             const removeColumnOption = document.getElementById('remove-column-option');
+            const rowContextMenu = document.getElementById('row-context-menu');
+            const removeRowOption = document.getElementById('remove-row-option');
 
-            let featureCount = 1;
             let columnToRemoveIndex = -1;
+            let rowToRemoveIndex = -1;
 
 
             if (showDataFrameLink) {
@@ -380,16 +432,23 @@
 
             addRowButton.addEventListener('click', () => {
                 const row = tableBody.insertRow();
-                const numCols = tableHead.rows[0]?.cells.length || 1;
-                for (let i = 0; i < numCols; i++) {
+                const numCols = tableHead.rows[0]?.cells.length || 2;
+                
+                const rowNumberCell = row.insertCell(0);
+                rowNumberCell.className = 'row-number';
+                rowNumberCell.textContent = tableBody.rows.length;
+                
+                for (let i = 1; i < numCols; i++) {
                     const cell = row.insertCell(i);
                     cell.contentEditable = true;
                 }
+                updateRowNumbers();
             });
 
             removeLastRowButton.addEventListener('click', () => {
                 if (tableBody.rows.length > 1) {
                     tableBody.deleteRow(-1);
+                    updateRowNumbers();
                 } else {
                     alert("Cannot remove the last data row.");
                 }
@@ -400,12 +459,15 @@
                 const bodyRows = tableBody.rows;
                 if (!headerRow) return;
 
-                featureCount = headerRow.cells.length + 1;
                 const newHeader = document.createElement("th");
                 newHeader.contentEditable = true;
-                newHeader.textContent = `Feature ${featureCount}`;
                 newHeader.style.backgroundColor = "#0d8bf1";
                 newHeader.style.fontWeight = "bold";
+                
+                // Correct column count calculation
+                const currentColumnCount = headerRow.cells.length - 1; // Subtract row number column
+                newHeader.textContent = `Feature ${currentColumnCount + 1}`;
+                
                 headerRow.appendChild(newHeader);
 
                 for (let i = 0; i < bodyRows.length; i++) {
@@ -416,12 +478,46 @@
                 updateColumnSelect();
             });
 
+            tableHead.addEventListener('input', (e) => {
+                if (e.target.tagName === 'TH' && !e.target.classList.contains('row-number')) {
+                    if (!e.target.textContent.trim()) {
+                        const currentColumnCount = document.querySelectorAll('#dynamicTable thead th:not(.row-number)').length;
+                        e.target.textContent = `Feature ${currentColumnCount}`;
+                    }
+                }
+            });
+
+            tableBody.addEventListener('contextmenu', (e) => {
+                const targetCell = e.target.closest('.row-number');
+                if (targetCell) {
+                    e.preventDefault();
+                    rowToRemoveIndex = targetCell.parentNode.rowIndex;
+                    rowContextMenu.style.top = `${e.pageY}px`;
+                    rowContextMenu.style.left = `${e.pageX}px`;
+                    rowContextMenu.style.display = 'block';
+                }
+            });
+
+            removeRowOption.addEventListener('click', () => {
+                if (rowToRemoveIndex > -1) {
+                    tableBody.deleteRow(rowToRemoveIndex - 1);
+                    updateRowNumbers();
+                }
+                rowContextMenu.style.display = 'none';
+                rowToRemoveIndex = -1;
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!rowContextMenu.contains(e.target)) {
+                    rowContextMenu.style.display = 'none';
+                }
+            });
 
             tableHead.addEventListener('contextmenu', (event) => {
                  const targetHeader = event.target.closest('th');
-                 if (targetHeader && tableHead.contains(targetHeader)) {
+                 if (targetHeader && tableHead.contains(targetHeader) && !targetHeader.classList.contains('row-number')) {
                      event.preventDefault();
-                     if (tableHead.rows[0].cells.length <= 1) {
+                     if (tableHead.rows[0].cells.length <= 2) {
                          alert("Cannot remove the last column.");
                          columnContextMenu.style.display = 'none';
                          return;
@@ -439,16 +535,14 @@
                     columnContextMenu.style.display = 'none';
                 }
             });
-            columnContextMenu.addEventListener('click', (event) => {
-                 event.stopPropagation();
-             });
             removeColumnOption.addEventListener('click', () => {
-                if (columnToRemoveIndex > -1 && tableHead.rows[0]?.cells.length > 1) {
+                if (columnToRemoveIndex > 0 && tableHead.rows[0]?.cells.length > 2) {
                     tableHead.rows[0].deleteCell(columnToRemoveIndex);
                     for (let i = 0; i < tableBody.rows.length; i++) {
                         tableBody.rows[i].deleteCell(columnToRemoveIndex);
                     }
                     updateColumnSelect();
+                    updateFeatureNames();
                 }
                 columnContextMenu.style.display = 'none';
                 columnToRemoveIndex = -1;
@@ -485,7 +579,7 @@
                  removeButton.textContent = 'Remove';
                  removeButton.className = 'remove-button';
                  function populateCorrelationSelects(selectElement) {
-                     const headerCells = document.querySelectorAll('#dynamicTable thead th');
+                     const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
                      selectElement.innerHTML = '';
                      headerCells.forEach((header, index) => {
                          const option = document.createElement('option');
@@ -528,8 +622,8 @@
                          return;
                      }
                      for (let i = 0; i < rows.length; i++) {
-                         const cell1 = rows[i].cells[colIndex1];
-                         const cell2 = rows[i].cells[colIndex2];
+                         const cell1 = rows[i].cells[colIndex1 + 1];
+                         const cell2 = rows[i].cells[colIndex2 + 1];
                          if (cell1 && cell2) {
                              const val1Text = cell1.innerText.trim();
                              const val2Text = cell2.innerText.trim();
@@ -596,7 +690,7 @@
                      statsSectionsContainer.removeChild(statsSection);
                  });
 
-                 const headerCells = document.querySelectorAll('#dynamicTable thead th');
+                 const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
                  select.innerHTML = '';
                  for (let i = 0; i < headerCells.length; i++) {
                      const option = document.createElement('option');
@@ -617,7 +711,7 @@
                      const rows = tableBody.rows; 
                      const values = [];
                      for (let i = 0; i < rows.length; i++) {
-                         const cell = rows[i].cells[columnIndex];
+                         const cell = rows[i].cells[columnIndex + 1];
                          if (cell) {
                             const valueText = cell.innerText.trim();
                             if (valueText !== ''){
@@ -675,7 +769,6 @@
                  });
              });
 
-
             table.addEventListener('keydown', function(event) {
                  if (event.key === 'Enter') {
                      event.preventDefault();
@@ -707,8 +800,8 @@
                              }
                          }
                      } else if (activeElement.tagName === 'TH' && activeElement.contentEditable === 'true') {
-                         if (tableBody.rows.length > 0 && tableBody.rows[0].cells.length > 0 && tableBody.rows[0].cells[0].contentEditable === 'true') {
-                            tableBody.rows[0].cells[0].focus();
+                         if (tableBody.rows.length > 0 && tableBody.rows[0].cells.length > 1 && tableBody.rows[0].cells[1].contentEditable === 'true') {
+                            tableBody.rows[0].cells[1].focus();
                          } else {
                             activeElement.blur();
                          }

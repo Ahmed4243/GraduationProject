@@ -98,16 +98,17 @@ a:hover {
 }
 
 .sidebar {
-    height: 100%;
-    width: 200px;
-    background-color: #117c9f;
-    box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  height: 100%;
+  width: 200px;
+  background-color: #117c9f;
+  box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
 }
 
 .block {
@@ -130,10 +131,10 @@ a:hover {
 table {
     width: 100%;
     table-layout: fixed;
-    border-collapse: collapse; /* Remove double borders */
-    background-color: #f9f9f9; /* Light background */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
-    border-radius: 8px; /* Rounded corners */
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
   }
   
   th, td {
@@ -141,22 +142,22 @@ table {
     text-align: center;
     font-family: 'Open Sans', sans-serif;
     font-size: 1em;
-    border: 1px solid #ddd; /* Light border color */
+    border: 1px solid #ddd;
   }
   
   th {
-    background-color: #4CAF50; /* Green header */
+    background-color: #4CAF50;
     color: white;
     font-weight: bold;
   }
   
   td {
-    background-color: #fff; /* White cells */
+    background-color: #fff;
     transition: background-color 0.3s ease;
   }
   
   td:hover {
-    background-color: #f0f8ff; /* Light blue hover effect */
+    background-color: #f0f8ff;
   }
   
   td[contenteditable="true"] {
@@ -168,7 +169,7 @@ table {
   }
   
   td[contenteditable="true"]:focus {
-    background-color: #e3f2fd; /* Light blue when focused */
+    background-color: #e3f2fd;
   }
   
   button {
@@ -183,7 +184,7 @@ table {
   }
   
   button:hover {
-    background-color: #0d8bf1; /* Darker blue on hover */
+    background-color: #0d8bf1;
   }
   
   
