@@ -15,24 +15,24 @@
         }
 
         .main-content {
-            margin-left: 300px; /* Offset to exclude the sidebar */
+            margin-left: 300px;
             display: flex;
-            flex-direction: column; /* Stack the heading and the cards */
-            align-items: center; /* Center-align content horizontally */
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
 
         h1 {
-            color: white; /* Adjust color for better visibility */
+            color: white;
         }
 
         .flex-container1 {
             display: flex;
-            flex-wrap: wrap; /* Allow cards to wrap */
-            justify-content: center; /* Center cards horizontally */
+            flex-wrap: wrap;
+            justify-content: center;
             align-items: center;
-            gap: 20px; /* Space between cards */
-            width: 100%; /* Ensure the container spans full width */
+            gap: 20px;
+            width: 100%;
         }
 
         .card {
@@ -43,55 +43,217 @@
             border: 2px solid #c3c6ce;
             transition: 0.5s ease-out;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
+         .card-details {
+             padding: 5px;
+             text-align: center;
+             flex-grow: 1;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             overflow: hidden;
+         }
+          .card-details img{
+             max-width: 100%;
+             max-height: 100%;
+             object-fit: contain;
+          }
+         .card-button {
+             width: 100%;
+             padding: 8px 0;
+             border: none;
+             border-top: 1px solid #c3c6ce;
+             background-color: #117c9f;
+             cursor: pointer;
+             font-size: 0.9em;
+             font-family: 'Open Sans', sans-serif;
+         }
+
         .block {
-        margin-bottom: 20px;
-        position: relative; /* For popup positioning */
-    }
+            margin-bottom: 20px;
+            position: relative;
+        }
 
-    /* Insert text styling */
-    .block h1 {
-        color: white;
-        font-family: 'Open Sans', sans-serif;
-        font-size: 1.5em;
-        margin: 0;
-        cursor: pointer;
-    }
+        .block h1 {
+            color: white;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.4em;
+            margin: 0;
+            cursor: pointer;
+        }
 
-    /* Popup menu styling */
-    .popup-menu {
-        display: none; /* Hidden by default */
-        position: absolute;
-        top: 0; /* Align with the top of "Insert" */
-        left: 100%; /* Position to the right of "Insert" */
-        background-color: white;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        padding: 20px; /* Increased padding for a larger menu */
-        width: 200px; /* Set the width to make the popup bigger */
-        z-index: 10;
-        font-family: 'Open Sans', sans-serif;
-        font-size: 1.4em; /* Increased font size */
-        white-space: nowrap; /* Prevent text wrapping */
-    }
+        .popup-menu {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            background-color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 20px;
+            width: 230px;
+            z-index: 1000;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.4em; 
+            white-space: nowrap;
+        }
 
-    /* Popup menu items */
-    .popup-menu a {
-        display: block;
-        color: #34495e;
-        text-decoration: none;
-        margin: 10px 0; /* Increased margin for better spacing */
-        font-size: 1.1em; /* Larger font size for items */
-    }
+        .popup-menu a {
+            display: block;
+            color: #34495e;
+            text-decoration: none;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
 
-    .popup-menu a:hover {
-        color: #00bfff; /* Highlight text on hover */
-    }
+        .popup-menu a:hover {
+            color: #00bfff;
+        }
 
-    /* Show the popup menu on hover */
-    .block:hover .popup-menu {
-        display: block;
-    }
+        .block:hover .popup-menu {
+            display: block;
+        }
+
+        #dynamicTable {
+             margin-bottom: 10px;
+         }
+         #dynamicTable th, #dynamicTable td {
+             padding: 15px; 
+         }
+         #dynamicTable td[contenteditable="true"]:focus {
+            outline: 2px solid #f1960d;
+         }
+        #addColumn, #addRow, #removeLastRow {
+             margin: 5px;
+             padding: 5px 10px;
+             cursor: pointer;
+         }
+         #addColumn { margin-left: 10px; height: 30px;}
+         #addRow { margin-top: 10px;}
+         #removeLastRow {
+            background-color: #f44336;
+         }
+         #stats-sections-container {
+             width: 100%;
+             margin-top: 20px;
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
+             align-items: center;
+         }
+         #stats-sections-container > div {
+             margin-top: 20px;
+             border: 1px solid #ccc;
+             padding: 15px;
+             width: auto;
+             max-width: 90%;
+         }
+         #stats-sections-container label { font-family: 'Open Sans'; font-size: 1em;}
+         #stats-sections-container select { margin-right: 10px;}
+         #stats-sections-container button { margin-left: 10px;}
+         #stats-sections-container .remove-button {
+              background-color: #f44336;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              padding: 5px 10px;
+              cursor: pointer;
+              margin-left: auto;
+          }
+         #stats-sections-container .stats-output,
+         #stats-sections-container .correlation-output {
+              margin-top: 10px;
+              font-family: 'Open Sans';
+              font-size: 1em;
+              width: 100%;
+              padding-top: 5px;
+              line-height: 1.4;
+          }
+         #stats-sections-container .stats-output strong,
+         #stats-sections-container .correlation-output strong{
+             margin-right: 4px;
+         }
+        .context-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 5px 0;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        .context-menu div {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95em;
+        }
+        .context-menu div:hover {
+            background-color: #f0f0f0;
+        }
+        .row-number {
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            text-align: center;
+            background-color: #f0f0f0 !important;
+            user-select: none;
+        }
+        #dynamicTable th:first-child,
+        #dynamicTable td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            background-color: #117c9f;
+            box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* KNN Styles */
+        #knn-section {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: auto;
+            max-width: 90%;
+        }
+        .knn-controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .knn-select-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .knn-params {
+            display: flex;
+            flex-direction: column;
+        }
+        .knn-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        #knn-results {
+            margin-top: 15px;
+            font-family: 'Open Sans';
+        }
     </style>
 </head>
 <body>
@@ -105,58 +267,896 @@
         <div class="block">
             <h1>Insert</h1>
             <div class="popup-menu">
-                <a href="#">DataFrame</a>
+                <a href="#" id="showDataFrameLink">DataFrame</a>
                 <a href="#">Add Rows</a>
                 <a href="#">Add Columns</a>
             </div>
         </div>
         <div class="block">
-            <h1>Analysis</h1>    
+            <h1>Modeling</h1>
+            <div class="popup-menu">
+                <a href="#" id="knnOption">KNN Prediction</a>
+            </div>
+        </div>
+        <div class="block">
+            <h1>Analysis</h1>
+            <div class="popup-menu">
+                <a href="#" id="descriptiveStatsOption">Descriptive Statistics</a>
+                <a href="#" id="correlationAnalysisOption">Correlation Analysis</a>
+            </div>
         </div>
         <div class="block">
             <h1>Visualization</h1>
-        </div>
+            </div>
         <div class="block">
-            <h1>Cleaning</h1>    
-        </div>
+            <h1>Cleaning</h1>
+             </div>
         <hr style="width: 80%;">
         <div class="block">
             <a href="" style="text-align: center;">
                 <img src="images/settings.svg" width="20%" height="20%">
-            </a>        
+            </a>
         </div>
     </div>
 
-    <div class="main-content">
-        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
-        <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
-        <div class="flex-container1">
-            <div class="card" style="background-color: #2173465b ">
-                <div class="card-details">
-                    <img src="images/excel.svg" style="height: 100%; width: 100%;">
+    <div id="mainContentArea" class="main-content"> <div id="importSection">
+            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
+            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
+            <div class="flex-container1">
+                 <div class="card" style="background-color: #2173465b ">
+                    <div class="card-details">
+                        <img src="images/excel.svg" style="height: 100%; width: 100%;">
+                    </div>
+                    <button class="card-button">Import from Excel</button>
                 </div>
-                <button class="card-button">Import from Excel</button>          
+                <div class="card" style="background-color: #fff2005b ">
+                    <div class="card-details">
+                        <img src="images/sql-database.svg" alt="" style="height: 100%; width: 100%;">
+                    </div>
+                    <button class="card-button">Import from SQL</button>
+                </div>
+                <div class="card" style="background-color: #6b460075 ">
+                    <div class="card-details">
+                        <img src="images/powerbi.svg" alt="" style="height: 100%; width: 100%;">
+                    </div>
+                    <button class="card-button">Import from PowerBI</button>
+                </div>
+                <div class="card" style="background-color: #6c6c6c32 ">
+                    <div class="card-details">
+                        <img src="images/sample.svg"alt="" style="height: 100%; width: 100%;">
+                    </div>
+                    <button class="card-button">Import Sample Data</button>
+                </div>
             </div>
-            <div class="card" style="background-color: #fff2005b ">
-                <div class="card-details">
-                    <img src="images/sql-database.svg" alt="" style="height: 100%; width: 100%;">
-                </div>
-                <button class="card-button">Import from SQL</button>          
+            <a href="" style="text-decoration: none;">
+                <p style="color: #00bfff; font-size: 1.5em;">Get data from another source →</p>
+            </a>
+        </div>
+
+        <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
+            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Untitled Project</p>
+
+            <div style="display: flex; align-items: flex-start; width: auto; justify-content: center;">
+                <table id="dynamicTable" border="1">
+                    <thead>
+                        <tr>
+                            <th class="row-number"></th>
+                            <th contenteditable="true" style="background-color: #0d8bf1; font-weight: bold;">Feature 1</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-number">1</td>
+                            <td contenteditable="true"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> </div>
+
+            <div style="margin-top: 10px;">
+                 <button id="addRow" style="margin-top: 10px;">+</button> <button id="removeLastRow">-</button>
             </div>
-            <div class="card" style="background-color: #6b460075 ">
-                <div class="card-details">
-                    <img src="images/powerbi.svg" alt="" style="height: 100%; width: 100%;">
+            <div id="stats-sections-container"></div>
+            
+            <!-- KNN Section -->
+            <div id="knn-section" style="display: none;">
+                <h3>KNN Prediction</h3>
+                <div class="knn-controls">
+                    <div class="knn-select-container">
+                        <label>Features (Select Multiple):</label>
+                        <select id="knn-features" multiple style="width: 200px; height: 100px;"></select>
+                    </div>
+                    <div class="knn-select-container">
+                        <label>Target:</label>
+                        <select id="knn-target" style="width: 200px;"></select>
+                    </div>
+                    <div class="knn-params">
+                        <label>Neighbors (K):</label>
+                        <input type="number" id="k-value" min="1" value="5" style="width: 50px;">
+                    </div>
                 </div>
-                <button class="card-button">Import from PowerBI</button>          
-            </div>
-            <div class="card" style="background-color: #6c6c6c32 ">
-                <div class="card-details">
-                    <img src="images/sample.svg"alt="" style="height: 100%; width: 100%;">
+                <div class="knn-buttons">
+                    <button id="make-prediction">Make Prediction</button>
+                    <button id="reset-knn" style="background-color: #f44336;">Reset</button>
                 </div>
-                <button class="card-button">Import Sample Data</button>          
+                <div id="knn-results"></div>
             </div>
         </div>
-        <a href="" style="text-decoration: none;"><p style="color: #00bfff; font-size: 1.5em;">Get data from another source →</p></a>
-    </div>
+
+        <div id="column-context-menu" class="context-menu">
+            <div id="remove-column-option">Remove Column</div>
+        </div>
+        <div id="row-context-menu" class="context-menu">
+            <div id="remove-row-option">Delete Row</div>
+        </div>
+
+
+    <script>
+       function calculateMean(values) {
+           if (values.length === 0) return 0;
+           const sum = values.reduce((acc, val) => acc + val, 0);
+           return sum / values.length;
+       }
+
+       function calculateStdDev(values, mean) {
+           if (values.length <= 1) return 0;
+            const currentMean = (mean === undefined) ? calculateMean(values) : mean;
+           const variance = values.reduce((acc, val) => acc + Math.pow(val - currentMean, 2), 0) / (values.length - 1);
+           return Math.sqrt(variance);
+       }
+
+       function updateRowNumbers() {
+           const rows = document.querySelectorAll('#dynamicTable tbody tr');
+           rows.forEach((row, index) => {
+               row.querySelector('.row-number').textContent = index + 1;
+           });
+       }
+
+       function updateFeatureNames() {
+           const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+           let featureCount = 1;
+           
+           headers.forEach((header) => {
+               if (/^Feature \d+$/.test(header.textContent)) {
+                   header.textContent = `Feature ${featureCount}`;
+               }
+               featureCount++;
+           });
+       }
+
+        function updateColumnSelect() {
+           const allSelects = document.querySelectorAll('#stats-sections-container select');
+           const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+
+           allSelects.forEach(select => {
+               const currentSelectedIndex = select.selectedIndex;
+               select.innerHTML = '';
+
+                if (headerCells.length === 0) return;
+
+               headerCells.forEach((header, index) => {
+                   const option = document.createElement('option');
+                   option.value = index;
+                   option.text = header.textContent || `Column ${index + 1}`;
+                   select.appendChild(option);
+               });
+
+               if (currentSelectedIndex !== -1 && currentSelectedIndex < select.options.length) {
+                   select.selectedIndex = currentSelectedIndex;
+               } else if (select.options.length > 0) {
+                    const isSecondCorrelationSelect = select.parentElement &&
+                                                   select.parentElement.querySelector('label:first-of-type') &&
+                                                   select.parentElement.querySelector('label:first-of-type').textContent.includes('Column 1') && 
+                                                   select.previousElementSibling && select.previousElementSibling.tagName === 'LABEL' && select.previousElementSibling.textContent.includes('Column 2'); 
+
+                   if (isSecondCorrelationSelect && select.options.length > 1) {
+                        select.selectedIndex = 1;
+                   } else {
+                       select.selectedIndex = 0;
+                   }
+               }
+           });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const showDataFrameLink = document.getElementById('showDataFrameLink');
+            const importSection = document.getElementById('importSection');
+            const dataframeSection = document.getElementById('dataframeSection');
+            const addRowButton = document.getElementById('addRow');
+            const removeLastRowButton = document.getElementById('removeLastRow');
+            const table = document.getElementById('dynamicTable');
+            const tableHead = table.querySelector('thead');
+            const tableBody = table.querySelector('tbody');
+            const addColumnButton = document.getElementById('addColumn');
+            const descriptiveStatsOption = document.getElementById('descriptiveStatsOption');
+            const correlationAnalysisOption = document.getElementById('correlationAnalysisOption');
+            const knnOption = document.getElementById('knnOption');
+            const statsSectionsContainer = document.getElementById('stats-sections-container');
+            const columnContextMenu = document.getElementById('column-context-menu');
+            const removeColumnOption = document.getElementById('remove-column-option');
+            const rowContextMenu = document.getElementById('row-context-menu');
+            const removeRowOption = document.getElementById('remove-row-option');
+            const knnSection = document.getElementById('knn-section');
+
+            let columnToRemoveIndex = -1;
+            let rowToRemoveIndex = -1;
+
+
+            if (showDataFrameLink) {
+                 showDataFrameLink.addEventListener('click', (e) => {
+                     e.preventDefault();
+                    importSection.style.display = 'none';
+                    dataframeSection.style.display = 'flex';
+                    dataframeSection.style.flexDirection = 'column';
+                    dataframeSection.style.alignItems = 'center';
+                 });
+             }
+
+            addRowButton.addEventListener('click', () => {
+                const row = tableBody.insertRow();
+                const numCols = tableHead.rows[0]?.cells.length || 2;
+                
+                const rowNumberCell = row.insertCell(0);
+                rowNumberCell.className = 'row-number';
+                rowNumberCell.textContent = tableBody.rows.length;
+                
+                for (let i = 1; i < numCols; i++) {
+                    const cell = row.insertCell(i);
+                    cell.contentEditable = true;
+                }
+                updateRowNumbers();
+            });
+
+            removeLastRowButton.addEventListener('click', () => {
+                if (tableBody.rows.length > 1) {
+                    tableBody.deleteRow(-1);
+                    updateRowNumbers();
+                } else {
+                    alert("Cannot remove the last data row.");
+                }
+            });
+
+            addColumnButton.addEventListener('click', () => {
+                const headerRow = tableHead.rows[0];
+                const bodyRows = tableBody.rows;
+                if (!headerRow) return;
+
+                const newHeader = document.createElement("th");
+                newHeader.contentEditable = true;
+                newHeader.style.backgroundColor = "#0d8bf1";
+                newHeader.style.fontWeight = "bold";
+                
+                // Correct column count calculation
+                const currentColumnCount = headerRow.cells.length - 1; // Subtract row number column
+                newHeader.textContent = `Feature ${currentColumnCount + 1}`;
+                
+                headerRow.appendChild(newHeader);
+
+                for (let i = 0; i < bodyRows.length; i++) {
+                    const newCell = document.createElement("td");
+                    newCell.contentEditable = true;
+                    bodyRows[i].appendChild(newCell);
+                }
+                updateColumnSelect();
+                updateKnnSelects();
+            });
+
+            tableHead.addEventListener('input', (e) => {
+                if (e.target.tagName === 'TH' && !e.target.classList.contains('row-number')) {
+                    if (!e.target.textContent.trim()) {
+                        const currentColumnCount = document.querySelectorAll('#dynamicTable thead th:not(.row-number)').length;
+                        e.target.textContent = `Feature ${currentColumnCount}`;
+                    }
+                }
+            });
+
+            tableBody.addEventListener('contextmenu', (e) => {
+                const targetCell = e.target.closest('.row-number');
+                if (targetCell) {
+                    e.preventDefault();
+                    rowToRemoveIndex = targetCell.parentNode.rowIndex;
+                    rowContextMenu.style.top = `${e.pageY}px`;
+                    rowContextMenu.style.left = `${e.pageX}px`;
+                    rowContextMenu.style.display = 'block';
+                }
+            });
+
+            removeRowOption.addEventListener('click', () => {
+                if (rowToRemoveIndex > -1) {
+                    tableBody.deleteRow(rowToRemoveIndex - 1);
+                    updateRowNumbers();
+                }
+                rowContextMenu.style.display = 'none';
+                rowToRemoveIndex = -1;
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!rowContextMenu.contains(e.target)) {
+                    rowContextMenu.style.display = 'none';
+                }
+            });
+
+            tableHead.addEventListener('contextmenu', (event) => {
+                 const targetHeader = event.target.closest('th');
+                 if (targetHeader && tableHead.contains(targetHeader) && !targetHeader.classList.contains('row-number')) {
+                     event.preventDefault();
+                     if (tableHead.rows[0].cells.length <= 2) {
+                         alert("Cannot remove the last column.");
+                         columnContextMenu.style.display = 'none';
+                         return;
+                     }
+                     columnToRemoveIndex = targetHeader.cellIndex;
+                     columnContextMenu.style.top = `${event.pageY}px`;
+                     columnContextMenu.style.left = `${event.pageX}px`;
+                     columnContextMenu.style.display = 'block';
+                 } else {
+                      columnContextMenu.style.display = 'none';
+                 }
+            });
+            document.addEventListener('click', (event) => {
+                if (!columnContextMenu.contains(event.target)) {
+                    columnContextMenu.style.display = 'none';
+                }
+            });
+            removeColumnOption.addEventListener('click', () => {
+                if (columnToRemoveIndex > 0 && tableHead.rows[0]?.cells.length > 2) {
+                    tableHead.rows[0].deleteCell(columnToRemoveIndex);
+                    for (let i = 0; i < tableBody.rows.length; i++) {
+                        tableBody.rows[i].deleteCell(columnToRemoveIndex);
+                    }
+                    updateColumnSelect();
+                    updateFeatureNames();
+                    updateKnnSelects();
+                }
+                columnContextMenu.style.display = 'none';
+                columnToRemoveIndex = -1;
+            });
+
+             correlationAnalysisOption.addEventListener('click', (e) => {
+                 e.preventDefault();
+                 const correlationSection = document.createElement('div');
+                 correlationSection.className = 'correlation-section';
+
+                 const label1 = document.createElement('label');
+                 label1.style.fontFamily = 'Open Sans';
+                 label1.textContent = 'Column 1:';
+                 const select1 = document.createElement('select');
+                 select1.className = 'correlation-column-select';
+
+                 const label2 = document.createElement('label');
+                 label2.style.fontFamily = 'Open Sans';
+                 label2.textContent = 'Column 2:';
+                 const select2 = document.createElement('select');
+                 select2.className = 'correlation-column-select';
+
+                 const calculateButton = document.createElement('button');
+                 calculateButton.textContent = 'Calculate Correlation';
+
+                 const correlationOutput = document.createElement('div');
+                 correlationOutput.className = 'correlation-output';
+                 correlationOutput.style.fontFamily = 'Open Sans';
+                 correlationOutput.style.fontSize = '1em';
+                 correlationOutput.style.marginTop = '5px';
+                 correlationOutput.style.width = '100%';
+
+                 const removeButton = document.createElement('button');
+                 removeButton.textContent = 'Remove';
+                 removeButton.className = 'remove-button';
+                 function populateCorrelationSelects(selectElement) {
+                     const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+                     selectElement.innerHTML = '';
+                     headerCells.forEach((header, index) => {
+                         const option = document.createElement('option');
+                         option.value = index;
+                         option.text = header.textContent || `Column ${index + 1}`;
+                         selectElement.appendChild(option);
+                     });
+                 }
+                 populateCorrelationSelects(select1);
+                 populateCorrelationSelects(select2);
+
+                 if (select2.options.length > 1) {
+                     select2.selectedIndex = 1;
+                 } else if (select2.options.length > 0) {
+                    select2.selectedIndex = 0;
+                 }
+
+                 correlationSection.appendChild(label1);
+                 correlationSection.appendChild(select1);
+                 correlationSection.appendChild(label2);
+                 correlationSection.appendChild(select2);
+                 correlationSection.appendChild(calculateButton);
+                 correlationSection.appendChild(removeButton);
+                 correlationSection.appendChild(correlationOutput);
+                 statsSectionsContainer.appendChild(correlationSection);
+
+                 removeButton.addEventListener('click', () => {
+                     statsSectionsContainer.removeChild(correlationSection);
+                 });
+
+                 calculateButton.addEventListener('click', () => {
+                     const colIndex1 = parseInt(select1.value);
+                     const colIndex2 = parseInt(select2.value);
+                     const rows = tableBody.rows;
+                     const values1 = [];
+                     const values2 = [];
+
+                     if (colIndex1 === colIndex2) {
+                         correlationOutput.innerHTML = `<strong>Error:</strong> Please select two different columns.`;
+                         return;
+                     }
+                     for (let i = 0; i < rows.length; i++) {
+                         const cell1 = rows[i].cells[colIndex1 + 1];
+                         const cell2 = rows[i].cells[colIndex2 + 1];
+                         if (cell1 && cell2) {
+                             const val1Text = cell1.innerText.trim();
+                             const val2Text = cell2.innerText.trim();
+                             if (val1Text !== '' && val2Text !== '') {
+                                 const val1 = parseFloat(val1Text);
+                                 const val2 = parseFloat(val2Text);
+                                 if (!isNaN(val1) && !isNaN(val2)) {
+                                     values1.push(val1);
+                                     values2.push(val2);
+                                 }
+                             }
+                         }
+                     }
+                     if (values1.length < 2) {
+                         correlationOutput.innerHTML = `<strong>Error:</strong> Not enough valid numeric data pairs (found ${values1.length}). Need at least 2.`;
+                         return;
+                     }
+                     const n = values1.length;
+                     const mean1 = calculateMean(values1);
+                     const mean2 = calculateMean(values2);
+                     const stdDev1 = calculateStdDev(values1, mean1);
+                     const stdDev2 = calculateStdDev(values2, mean2);
+                     if (stdDev1 === 0 || stdDev2 === 0) {
+                         correlationOutput.innerHTML = `<strong>Result:</strong> Correlation is undefined (one or both columns have zero standard deviation).`;
+                         return;
+                     }
+                     let covarianceSum = 0;
+                     for (let i = 0; i < n; i++) {
+                         covarianceSum += (values1[i] - mean1) * (values2[i] - mean2);
+                     }
+                     const correlation = covarianceSum / ((n - 1) * stdDev1 * stdDev2);
+                      const clampedCorrelation = Math.max(-1, Math.min(1, correlation));
+                     correlationOutput.innerHTML = `<strong>Pearson Correlation:</strong> ${clampedCorrelation.toFixed(4)}`;
+                 });
+             });
+             descriptiveStatsOption.addEventListener('click', (e) => {
+                 e.preventDefault();
+                 const statsSection = document.createElement('div');
+                 statsSection.className = 'stats-section';
+
+                 const label = document.createElement('label');
+                 label.style.fontFamily = 'Open Sans';
+                 label.style.fontSize = '1em';
+                 label.textContent = 'Select a column:';
+
+                 const select = document.createElement('select');
+                 select.style.marginRight = '10px';
+
+                 const calculateButton = document.createElement('button');
+                 calculateButton.style.marginLeft = '10px';
+                 calculateButton.textContent = 'Calculate Stats';
+
+                 const statsOutput = document.createElement('div');
+                 statsOutput.className = 'stats-output';
+                 statsOutput.style.marginTop = '10px';
+                 statsOutput.style.fontFamily = 'Open Sans'; 
+                 statsOutput.style.fontSize = '1em'; 
+
+                 const removeButton = document.createElement('button');
+                 removeButton.textContent = 'Remove';
+                 removeButton.className = 'remove-button';
+
+                 removeButton.addEventListener('click', () => {
+                     statsSectionsContainer.removeChild(statsSection);
+                 });
+
+                 const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+                 select.innerHTML = '';
+                 for (let i = 0; i < headerCells.length; i++) {
+                     const option = document.createElement('option');
+                     option.value = i;
+                     option.text = headerCells[i].textContent || `Column ${i + 1}`;
+                     select.appendChild(option);
+                 }
+
+                 statsSection.appendChild(label);
+                 statsSection.appendChild(select);
+                 statsSection.appendChild(calculateButton);
+                 statsSection.appendChild(removeButton);
+                 statsSection.appendChild(statsOutput);
+                 statsSectionsContainer.appendChild(statsSection);
+
+                 calculateButton.addEventListener('click', () => { 
+                     const columnIndex = parseInt(select.value);
+                     const rows = tableBody.rows; 
+                     const values = [];
+                     for (let i = 0; i < rows.length; i++) {
+                         const cell = rows[i].cells[columnIndex + 1];
+                         if (cell) {
+                            const valueText = cell.innerText.trim();
+                            if (valueText !== ''){
+                                 const value = parseFloat(valueText);
+                                 if (!isNaN(value)) {
+                                     values.push(value);
+                                 }
+                             }
+                         }
+                     }
+                     if (values.length === 0) {
+                         statsOutput.innerHTML = 'No numeric data in this column.'; 
+                         return;
+                     }
+                     const sum = values.reduce((a, b) => a + b, 0);
+                     const avg = sum / values.length;
+                     const min = Math.min(...values);
+                     const max = Math.max(...values);
+                     const sorted = [...values].sort((a, b) => a - b);
+                     const mid = Math.floor(sorted.length / 2);
+                     const median = sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+                     const frequency = {};
+                     let maxFreq = 0;
+                     let mode = [];
+                     values.forEach(value => {
+                         frequency[value] = (frequency[value] || 0) + 1;
+                         if (frequency[value] > maxFreq) {
+                             maxFreq = frequency[value];
+                         }
+                     });
+
+                     const allSameFrequency = Object.values(frequency).every(freq => freq === maxFreq);
+                    if (maxFreq === 1 || (allSameFrequency && Object.keys(frequency).length > 1)) { 
+                         mode = ["No mode"];
+                     } else {
+                          for (const key in frequency) {
+                              if (frequency[key] === maxFreq) {
+                                  mode.push(Number(key));
+                              }
+                          }
+                     }
+
+                     const variance = values.reduce((acc, val) => acc + Math.pow(val - avg, 2), 0) / values.length;
+                     const stdDev = Math.sqrt(variance);
+                     statsOutput.innerHTML = `
+                         <strong>Count:</strong> ${values.length}<br>
+                         <strong>Sum:</strong> ${sum.toFixed(2)}<br>
+                         <strong>Average:</strong> ${avg.toFixed(2)}<br>
+                         <strong>Median:</strong> ${median.toFixed(2)}<br>
+                         <strong>Mode:</strong> ${mode.join(', ')}<br>
+                         <strong>Min:</strong> ${min}<br>
+                         <strong>Max:</strong> ${max}<br>
+                         <strong>Variance:</strong> ${variance.toFixed(2)}<br>
+                         <strong>Standard Deviation:</strong> ${stdDev.toFixed(2)}`;
+                 });
+             });
+
+             // KNN Option Click Handler
+             knnOption.addEventListener('click', (e) => {
+                 e.preventDefault();
+                 knnSection.style.display = 'block';
+                 updateKnnSelects();
+             });
+
+            table.addEventListener('keydown', function(event) {
+                 if (event.key === 'Enter') {
+                     event.preventDefault();
+                     const activeElement = document.activeElement;
+                     if (activeElement.tagName === 'TD' && activeElement.contentEditable === 'true') {
+                         const currentRow = activeElement.parentNode;
+                         const currentCellIndex = activeElement.cellIndex;
+                         const nextCellIndex = currentCellIndex + 1; 
+                         let nextCell = currentRow.cells[nextCellIndex]; 
+                         if (nextCell && nextCell.contentEditable === 'true') {
+                             nextCell.focus();
+                         } else { 
+                             const nextRow = currentRow.nextElementSibling;
+                             if (nextRow) {
+                                 let firstEditableCellInNextRow = null;
+                                 for(let i=0; i<nextRow.cells.length; i++){
+                                     if(nextRow.cells[i].contentEditable === 'true'){
+                                         firstEditableCellInNextRow = nextRow.cells[i];
+                                         break;
+                                     }
+                                 }
+                                 if(firstEditableCellInNextRow) {
+                                     firstEditableCellInNextRow.focus();
+                                 } else {
+                                     activeElement.blur();
+                                 }
+                             } else {
+                                 activeElement.blur();
+                             }
+                         }
+                     } else if (activeElement.tagName === 'TH' && activeElement.contentEditable === 'true') {
+                         if (tableBody.rows.length > 0 && tableBody.rows[0].cells.length > 1 && tableBody.rows[0].cells[1].contentEditable === 'true') {
+                            tableBody.rows[0].cells[1].focus();
+                         } else {
+                            activeElement.blur();
+                         }
+                     }
+                 }
+            });
+
+        });
+
+        // KNN Implementation Classes
+        class StandardScaler {
+            fitTransform(data) {
+                this.means = [];
+                this.stds = [];
+                
+                if (data.length === 0) return [];
+                
+                const numFeatures = data[0].length;
+                for (let i = 0; i < numFeatures; i++) {
+                    const featureValues = data.map(row => row[i]);
+                    const mean = featureValues.reduce((a, b) => a + b, 0) / featureValues.length;
+                    const std = Math.sqrt(featureValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / featureValues.length);
+                    
+                    this.means.push(mean);
+                    this.stds.push(std || 1);
+                }
+                
+                return this.transform(data);
+            }
+            
+            transform(data) {
+                return data.map(row => 
+                    row.map((val, i) => 
+                        (val - this.means[i]) / this.stds[i]
+                    )
+                );
+            }
+        }
+
+        class KNeighborsClassifier {
+            constructor(k = 5) {
+                this.k = k;
+            }
+            
+            fit(X, y) {
+                this.X_train = X;
+                this.y_train = y;
+            }
+            
+            predict(X_test) {
+                return X_test.map(testPoint => {
+                    const distances = this.X_train.map((trainPoint, i) => ({
+                        label: this.y_train[i],
+                        distance: Math.sqrt(
+                            trainPoint.reduce((sum, val, j) => 
+                                sum + Math.pow(val - testPoint[j], 2), 0)
+                        )
+                    }));
+                    
+                    const nearest = distances
+                        .sort((a, b) => a.distance - b.distance)
+                        .slice(0, this.k);
+                    
+                    const votes = {};
+                    nearest.forEach(n => {
+                        votes[n.label] = (votes[n.label] || 0) + 1;
+                    });
+                    
+                    return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+                });
+            }
+        }
+
+        // Event listeners
+        document.getElementById('make-prediction').addEventListener('click', makePrediction);
+        document.getElementById('reset-knn').addEventListener('click', resetKnn);
+
+        function makePrediction() {
+            if (!window.knnModel) {
+                trainAndPredict();
+            } else {
+                predictWithKnn();
+            }
+        }
+
+        function trainAndPredict() {
+            const featuresSelect = document.getElementById('knn-features');
+            const targetSelect = document.getElementById('knn-target');
+            const kValue = document.getElementById('k-value').value;
+            
+            const selectedFeatures = Array.from(featuresSelect.selectedOptions).map(opt => parseInt(opt.value));
+            const selectedTarget = parseInt(targetSelect.value);
+            
+            if (selectedFeatures.length === 0) {
+                alert("Please select at least one feature");
+                return;
+            }
+            
+            // Get data from table
+            const X = [];
+            const y = [];
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const featureValues = [];
+                let hasEmpty = false;
+                
+                for (const featureIndex of selectedFeatures) {
+                    const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
+                    if (cell) {
+                        const valueText = cell.innerText.trim();
+                        if (valueText === '') {
+                            hasEmpty = true;
+                            break;
+                        }
+                        const value = parseFloat(valueText);
+                        if (isNaN(value)) {
+                            hasEmpty = true;
+                            break;
+                        }
+                        featureValues.push(value);
+                    }
+                }
+                
+                const targetCell = rows[i].cells[selectedTarget + 1]; // +1 to account for row number column
+                if (targetCell && !hasEmpty) {
+                    const targetText = targetCell.innerText.trim();
+                    if (targetText !== '') {
+                        y.push(targetText);
+                        X.push(featureValues);
+                    }
+                }
+            }
+            
+            if (X.length < 2) {
+                document.getElementById('knn-results').innerHTML = 
+                    "<strong>Error:</strong> Not enough valid data for training (need at least 2 samples)";
+                return;
+            }
+            
+            // Scale features
+            const scaler = new StandardScaler();
+            const X_scaled = scaler.fitTransform(X);
+            
+            // Train KNN
+            const knn = new KNeighborsClassifier(parseInt(kValue));
+            knn.fit(X_scaled, y);
+            
+            // Store model for predictions
+            window.knnModel = knn;
+            window.knnScaler = scaler;
+            window.knnFeatures = selectedFeatures;
+            window.knnTarget = selectedTarget;
+            
+            // Make predictions
+            predictWithKnn();
+        }
+
+        function predictWithKnn() {
+            if (!window.knnModel) {
+                alert("Please train the model first");
+                return;
+            }
+            
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const predictions = [];
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const featureValues = [];
+                let hasEmpty = false;
+                
+                for (const featureIndex of window.knnFeatures) {
+                    const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
+                    if (cell) {
+                        const valueText = cell.innerText.trim();
+                        if (valueText === '') {
+                            hasEmpty = true;
+                            break;
+                        }
+                        const value = parseFloat(valueText);
+                        if (isNaN(value)) {
+                            hasEmpty = true;
+                            break;
+                        }
+                        featureValues.push(value);
+                    }
+                }
+                
+                if (!hasEmpty) {
+                    const scaledValues = window.knnScaler.transform([featureValues]);
+                    const prediction = window.knnModel.predict(scaledValues)[0];
+                    predictions.push({
+                        rowIndex: i,
+                        prediction: prediction
+                    });
+                }
+            }
+            
+            // Add predictions to table
+            let predictionColIndex = -1;
+            
+            // Check if prediction column exists
+            for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
+                if (headerRow.cells[i].textContent === 'Prediction') {
+                    predictionColIndex = i;
+                    break;
+                }
+            }
+            
+            // Add new column if needed
+            if (predictionColIndex === -1) {
+                predictionColIndex = headerRow.cells.length;
+                const newHeader = document.createElement("th");
+                newHeader.textContent = "Prediction";
+                newHeader.style.backgroundColor = "#4CAF50";
+                newHeader.style.color = "white";
+                headerRow.appendChild(newHeader);
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const newCell = document.createElement("td");
+                    rows[i].appendChild(newCell);
+                }
+            }
+            
+            // Fill predictions
+            for (const pred of predictions) {
+                const cell = rows[pred.rowIndex].cells[predictionColIndex];
+                cell.textContent = pred.prediction;
+                cell.style.fontWeight = 'bold';
+                cell.style.color = '#4CAF50';
+            }
+            
+            document.getElementById('knn-results').innerHTML = 
+                "<strong>Predictions added to table</strong>";
+        }
+
+        function resetKnn() {
+            window.knnModel = null;
+            window.knnScaler = null;
+            window.knnFeatures = null;
+            window.knnTarget = null;
+            document.getElementById('knn-results').innerHTML = "";
+            
+            // Remove prediction column if it exists
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
+                if (headerRow.cells[i].textContent === 'Prediction') {
+                    headerRow.deleteCell(i);
+                    const bodyRows = document.querySelectorAll('#dynamicTable tbody tr');
+                    bodyRows.forEach(row => row.deleteCell(i));
+                    break;
+                }
+            }
+        }
+
+        function updateKnnSelects() {
+            const featuresSelect = document.getElementById('knn-features');
+            const targetSelect = document.getElementById('knn-target');
+            const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+            
+            featuresSelect.innerHTML = '';
+            targetSelect.innerHTML = '';
+            
+            headerCells.forEach((header, index) => {
+                if (header.textContent !== 'Prediction') {
+                    const featureOption = document.createElement('option');
+                    featureOption.value = index;
+                    featureOption.text = header.textContent || `Column ${index + 1}`;
+                    featuresSelect.appendChild(featureOption.cloneNode(true));
+                    targetSelect.appendChild(featureOption);
+                }
+            });
+        }
+
+        // Update KNN selects when columns change
+        document.querySelector('#dynamicTable').addEventListener('DOMSubtreeModified', () => {
+            if (document.getElementById('knn-section').style.display !== 'none') {
+                updateKnnSelects();
+            }
+        });
+    </script>
+
 </body>
 </html>
