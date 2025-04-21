@@ -47,7 +47,44 @@
             flex-direction: column;
             justify-content: space-between;
         }
-         .card-details {
+
+        /* NEW PROJECT TITLE STYLES */
+        .project-title {
+            font-family: 'Open Sans';
+            font-weight: 500;
+            font-size: 2em;
+            cursor: text;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin: 20px 0;
+            border: 2px solid transparent;
+            outline: none;
+            min-width: 300px;
+            text-align: center;
+            background: transparent;
+        }
+
+        .project-title:hover {
+            background: rgba(245, 245, 245, 0.6);
+        }
+
+        .project-title:focus {
+            border: 2px solid #0d8bf1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(13, 139, 241, 0.15);
+        }
+
+        .project-title:empty::before {
+            content: "Untitled Project";
+            color: #888;
+        }
+
+        .project-title:focus:empty::before {
+            content: "";
+        }
+
+        .card-details {
              padding: 5px;
              text-align: center;
              flex-grow: 1;
@@ -261,7 +298,8 @@
         </div>
     </div>
 
-    <div id="mainContentArea" class="main-content"> <div id="importSection">
+    <div id="mainContentArea" class="main-content"> 
+        <div id="importSection">
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
             <div class="flex-container1">
@@ -296,7 +334,7 @@
         </div>
 
         <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
-            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Untitled Project</p>
+            <div class="project-title" contenteditable="true"></div>
 
             <div style="display: flex; align-items: flex-start; width: auto; justify-content: center;">
                 <table id="dynamicTable" border="1">
@@ -313,22 +351,23 @@
                         </tr>
                     </tbody>
                 </table>
-                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> </div>
+                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> 
+            </div>
 
             <div style="margin-top: 10px;">
-                 <button id="addRow" style="margin-top: 10px;">+</button> <button id="removeLastRow">-</button>
+                 <button id="addRow" style="margin-top: 10px;">+</button> 
+                 <button id="removeLastRow">-</button>
             </div>
             <div id="stats-sections-container"></div>
         </div>
-
     </div> 
+
     <div id="column-context-menu" class="context-menu">
         <div id="remove-column-option">Remove Column</div>
     </div>
     <div id="row-context-menu" class="context-menu">
         <div id="remove-row-option">Delete Row</div>
     </div>
-
 
     <script>
        function calculateMean(values) {
@@ -397,6 +436,25 @@
            });
         }
 
+        const projectTitle = document.querySelector('.project-title');
+        
+        projectTitle.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                projectTitle.blur();
+            }
+        });
+
+        projectTitle.addEventListener('input', (e) => {
+            localStorage.setItem('projectName', e.target.textContent);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('projectName');
+            if(savedName) {
+                projectTitle.textContent = savedName;
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const showDataFrameLink = document.getElementById('showDataFrameLink');
@@ -418,7 +476,6 @@
 
             let columnToRemoveIndex = -1;
             let rowToRemoveIndex = -1;
-
 
             if (showDataFrameLink) {
                  showDataFrameLink.addEventListener('click', (e) => {
@@ -464,8 +521,7 @@
                 newHeader.style.backgroundColor = "#0d8bf1";
                 newHeader.style.fontWeight = "bold";
                 
-                // Correct column count calculation
-                const currentColumnCount = headerRow.cells.length - 1; // Subtract row number column
+                const currentColumnCount = headerRow.cells.length - 1;
                 newHeader.textContent = `Feature ${currentColumnCount + 1}`;
                 
                 headerRow.appendChild(newHeader);
