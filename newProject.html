@@ -48,7 +48,6 @@
             justify-content: space-between;
         }
 
-        /* NEW PROJECT TITLE STYLES */
         .project-title {
             font-family: 'Open Sans';
             font-weight: 500;
@@ -261,6 +260,58 @@
             z-index: 1000;
         }
 
+        .cleaning-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1001;
+            min-width: 300px;
+        }
+
+        .cleaning-dialog label {
+            display: block;
+            margin: 10px 0 5px;
+            font-family: 'Open Sans';
+        }
+
+        .cleaning-dialog select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cleaning-dialog-buttons {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .cleaning-dialog-buttons button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .cancelButton {
+            background-color: red;
+        }
+
+        .dialog-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
     </style>
 </head>
 <body>
@@ -289,7 +340,13 @@
             </div>
         <div class="block">
             <h1>Cleaning</h1>
-             </div>
+            <div class="popup-menu">
+                <a href="#" id="handleMissingValues">Missing Values</a>
+                <a href="#" id="removeDuplicates">Remove Duplicates</a>
+                <a href="#" id="standardizeText">Standardize Text</a>
+                <a href="#" id="convertToNumeric">Convert to Numeric</a>
+            </div>
+        </div>
         <hr style="width: 80%;">
         <div class="block">
             <a href="" style="text-align: center;">
@@ -362,6 +419,54 @@
         </div>
     </div> 
 
+    <div class="dialog-backdrop" id="missingValuesBackdrop"></div>
+    <div id="missingValuesDialog" class="cleaning-dialog">
+        <h3 style="margin-top: 0;">Handle Missing Values</h3>
+        <label for="missingValuesColumn">Column:</label>
+        <select id="missingValuesColumn"></select>
+        <div id="imputationMethods">
+            <label for="handlingMethod">Method:</label>
+            <select id="handlingMethod">
+                <option value="impute">Impute Values</option>
+                <option value="remove">Remove Rows</option>
+            </select>
+            <div id="imputationOptions" style="margin-top: 10px;">
+                <label for="imputationType">Imputation Type:</label>
+                <select id="imputationType">
+                    <option value="mean">Mean</option>
+                    <option value="median">Median</option>
+                    <option value="mode">Mode</option>
+                    <option value="previous">Previous Value</option>
+                </select>
+            </div>
+        </div>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelMissingValuesBtn" class="cancelButton">Cancel</button>
+            <button id="confirmMissingValuesBtn">Confirm</button>
+        </div>
+    </div>
+
+    <div class="dialog-backdrop" id="columnActionBackdrop"></div>
+    <div id="columnActionDialog" class="cleaning-dialog">
+        <h3 id="columnActionTitle" style="margin-top: 0;"></h3>
+        <label for="actionColumnSelect">Column:</label>
+        <select id="actionColumnSelect"></select>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelColumnActionBtn" class="cancelButton">Cancel</button>
+            <button id="confirmColumnActionBtn">Confirm</button>
+        </div>
+    </div>
+
+    <div class="dialog-backdrop" id="duplicateBackdrop"></div>
+    <div id="duplicateConfirmation" class="cleaning-dialog">
+        <h3>Remove Duplicates</h3>
+        <p>Are you sure you want to remove duplicate rows?</p>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelDuplicateBtn" class="cancelButton">Cancel</button>
+            <button id="confirmDuplicateBtn">Confirm</button>
+        </div>
+    </div>
+
     <div id="column-context-menu" class="context-menu">
         <div id="remove-column-option">Remove Column</div>
     </div>
@@ -374,6 +479,31 @@
            if (values.length === 0) return 0;
            const sum = values.reduce((acc, val) => acc + val, 0);
            return sum / values.length;
+       }
+
+       function calculateMedian(values) {
+           if (values.length === 0) return 0;
+           const sorted = [...values].sort((a, b) => a - b);
+           const mid = Math.floor(sorted.length / 2);
+           return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+       }
+
+       function calculateMode(values) {
+           const frequency = {};
+           let maxFreq = 0;
+           let modes = [];
+           
+           values.forEach(value => {
+               frequency[value] = (frequency[value] || 0) + 1;
+               if (frequency[value] > maxFreq) {
+                   maxFreq = frequency[value];
+                   modes = [value];
+               } else if (frequency[value] === maxFreq) {
+                   modes.push(value);
+               }
+           });
+           
+           return modes.length === values.length ? [] : modes;
        }
 
        function calculateStdDev(values, mean) {
@@ -456,6 +586,201 @@
             }
         });
 
+        let currentCleaningAction = null;
+
+        document.getElementById('handlingMethod').addEventListener('change', function() {
+            const imputationOptions = document.getElementById('imputationOptions');
+            imputationOptions.style.display = this.value === 'impute' ? 'block' : 'none';
+        });
+
+        function showMissingValuesDialog() {
+            document.getElementById('missingValuesBackdrop').style.display = 'block';
+            document.getElementById('missingValuesDialog').style.display = 'block';
+            populateColumnSelect('missingValuesColumn');
+            const methodSelect = document.getElementById('handlingMethod');
+            const imputationOptions = document.getElementById('imputationOptions');
+            imputationOptions.style.display = methodSelect.value === 'impute' ? 'block' : 'none';
+        }
+
+        function showColumnActionDialog(title) {
+            document.getElementById('columnActionBackdrop').style.display = 'block';
+            document.getElementById('columnActionDialog').style.display = 'block';
+            document.getElementById('columnActionTitle').textContent = title;
+            populateColumnSelect('actionColumnSelect');
+        }
+
+        function hideAllDialogs() {
+            document.querySelectorAll('.dialog-backdrop').forEach(d => d.style.display = 'none');
+            document.querySelectorAll('.cleaning-dialog').forEach(d => d.style.display = 'none');
+        }
+
+        function populateColumnSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '';
+            const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+            headers.forEach((header, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = header.textContent;
+                select.appendChild(option);
+            });
+        }
+
+        function handleMissingValues() {
+            const colIndex = parseInt(document.getElementById('missingValuesColumn').value);
+            const method = document.getElementById('handlingMethod').value;
+            
+            if (method === 'remove') {
+                const rows = document.querySelectorAll('#dynamicTable tbody tr');
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    if (!cell.textContent.trim()) {
+                        row.remove();
+                    }
+                });
+                updateRowNumbers();
+            } else {
+                const imputationType = document.getElementById('imputationType').value;
+                const rows = document.querySelectorAll('#dynamicTable tbody tr');
+                let imputeValue = null;
+                let previousValue = null;
+                
+                const numericValues = [];
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    const value = parseFloat(cell.textContent);
+                    if (!isNaN(value)) {
+                        numericValues.push(value);
+                    }
+                });
+
+                switch(imputationType) {
+                    case 'mean':
+                        imputeValue = numericValues.length > 0 ? calculateMean(numericValues) : 0;
+                        break;
+                    case 'median':
+                        imputeValue = numericValues.length > 0 ? calculateMedian(numericValues) : 0;
+                        break;
+                    case 'mode':
+                        const modes = calculateMode(numericValues);
+                        imputeValue = modes.length > 0 ? modes[0] : 'N/A';
+                        break;
+                }
+
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    if (!cell.textContent.trim()) {
+                        if (imputationType === 'previous') {
+                            if (previousValue !== null) {
+                                cell.textContent = previousValue;
+                            }
+                        } else {
+                            cell.textContent = imputeValue;
+                        }
+                    } else {
+                        previousValue = imputationType === 'previous' ? cell.textContent : previousValue;
+                    }
+                });
+            }
+            hideAllDialogs();
+        }
+
+        function standardizeText(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                cell.textContent = cell.textContent.trim().toLowerCase();
+            });
+        }
+
+        function convertToNumeric(colIndex) {
+        const rows = document.querySelectorAll('#dynamicTable tbody tr');
+        let hasInvalid = false;
+        
+        rows.forEach(row => {
+            const cell = row.cells[colIndex + 1];
+            let original = cell.textContent.trim();
+            
+            if (original === '') return;
+            
+            original = original.replace(/^"(.*)"$/, '$1');
+            
+            if (original.startsWith('INVALID: ')) return;
+
+            const number = parseFloat(original);
+            
+            if (isNaN(number)) {
+                cell.textContent = 'INVALID: ' + original;
+                hasInvalid = true;
+            } else {
+                cell.textContent = number.toString();
+            }
+        });
+        
+        if (hasInvalid) {
+            alert('Some values couldn\'t be converted. Invalid entries are marked with "INVALID: " prefix.');
+        }
+    }
+
+        function showRemovalFeedback(removedCount) {
+            if (removedCount > 0) {
+                alert(`${removedCount} duplicate rows were removed.`);
+            } else {
+                alert("No duplicate rows found.");
+            }
+        }
+
+        function removeDuplicates() {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const seen = new Set();
+            let removedCount = 0;
+            
+            Array.from(rows).reverse().forEach(row => {
+                const cells = Array.from(row.cells)
+                    .slice(1)
+                    .map(cell => cell.textContent.trim().toLowerCase());
+                const key = cells.join('|');
+                
+                if (seen.has(key)) {
+                    row.remove();
+                    removedCount++;
+                } else {
+                    seen.add(key);
+                }
+            });
+            
+            updateRowNumbers();
+            return removedCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const duplicateConfirmation = document.getElementById('duplicateConfirmation');
+            const duplicateBackdrop = document.getElementById('duplicateBackdrop');
+            
+            document.getElementById('removeDuplicates').addEventListener('click', (e) => {
+                e.preventDefault();
+                duplicateConfirmation.style.display = 'block';
+                duplicateBackdrop.style.display = 'block';
+            });
+
+            document.getElementById('confirmDuplicateBtn').addEventListener('click', () => {
+                const removedCount = removeDuplicates();
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+                showRemovalFeedback(removedCount);
+            });
+
+            document.getElementById('cancelDuplicateBtn').addEventListener('click', () => {
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+            });
+
+            duplicateBackdrop.addEventListener('click', () => {
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const showDataFrameLink = document.getElementById('showDataFrameLink');
             const importSection = document.getElementById('importSection');
@@ -474,8 +799,41 @@
             const rowContextMenu = document.getElementById('row-context-menu');
             const removeRowOption = document.getElementById('remove-row-option');
 
-            let columnToRemoveIndex = -1;
-            let rowToRemoveIndex = -1;
+            document.getElementById('handleMissingValues').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'missing';
+                showMissingValuesDialog();
+            });
+
+            document.getElementById('standardizeText').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'standardize';
+                showColumnActionDialog('Standardize Text');
+            });
+
+            document.getElementById('convertToNumeric').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'convert';
+                showColumnActionDialog('Convert to Numeric');
+            });
+
+            document.getElementById('confirmMissingValuesBtn').addEventListener('click', handleMissingValues);
+            document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
+            
+            document.getElementById('confirmColumnActionBtn').addEventListener('click', () => {
+                const colIndex = parseInt(document.getElementById('actionColumnSelect').value);
+                if (currentCleaningAction === 'standardize') {
+                    standardizeText(colIndex);
+                } else if (currentCleaningAction === 'convert') {
+                    convertToNumeric(colIndex);
+                }
+                hideAllDialogs();
+            });
+            document.getElementById('cancelColumnActionBtn').addEventListener('click', hideAllDialogs);
+
+            document.querySelectorAll('.dialog-backdrop').forEach(backdrop => {
+                backdrop.addEventListener('click', hideAllDialogs);
+            });
 
             if (showDataFrameLink) {
                  showDataFrameLink.addEventListener('click', (e) => {
