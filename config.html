@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Configuration</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+    <style>
+        /* Initially hide all chart-specific config fields */
+        .config-field {
+            display: none;
+            margin-bottom: 15px; /* Add some spacing */
+        }
+    </style>
+</head>
+<body>
+    <h2 id="config-title-header">Configure Chart</h2>
+
+    <!-- Common Fields -->
+    <div class="config-field common-field">
+        <label for="config-title">Chart Title:</label>
+        <input type="text" id="config-title" name="config-title">
+    </div>
+
+    <!-- Scatter Plot & Histogram & Bar Chart & Bubble & Line: X-Axis Column -->
+    <div class="config-field scatter-field histogram-field barchart-field bubble-field line-field">
+        <label for="config-x-axis-col" id="config-x-axis-col-label">X-Axis Column:</label>
+        <select id="config-x-axis-col" name="config-x-axis-col">
+            <option value="">Select X-Column</option>
+            <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+    <!-- Scatter Plot & Histogram & Bubble: Y-Axis Column -->
+    <div class="config-field scatter-field histogram-field bubble-field">
+        <label for="config-y-axis-col">Y-Axis Column:</label>
+        <select id="config-y-axis-col" name="config-y-axis-col">
+            <option value="">Select Y-Column</option>
+             <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+     <!-- Bar Chart: Y-Axis Column (Uncommented) -->
+     <div class="config-field barchart-field"> <!-- Ensured barchart-field class is present -->
+        <label for="config-y-axis-col-bar">Value Column (Y-Axis):</label>
+        <select id="config-y-axis-col-bar" name="config-y-axis-col-bar">
+            <option value="">Select Value Column</option>
+            <!-- Options populated dynamically -->
+       </select>
+    </div>
+
+    <!-- Pie Chart: Category Column -->
+    <div class="config-field piechart-field">
+        <label for="config-category-col">Category Column:</label>
+        <select id="config-category-col" name="config-category-col">
+            <option value="">Select Category Column</option>
+             <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+    <!-- Pie Chart: Value Column (Optional) -->
+    <div class="config-field piechart-field">
+        <label for="config-value-col">Value Column (Optional):</label>
+        <select id="config-value-col" name="config-value-col">
+            <option value="">Select Value Column (or leave blank)</option>
+             <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+    <!-- Scatter, Histogram, Bar Chart & Bubble & Line: X-Axis Label -->
+    <div class="config-field scatter-field histogram-field barchart-field bubble-field line-field">
+        <label for="config-x-label">X-Axis Label:</label>
+        <input type="text" id="config-x-label" name="config-x-label">
+    </div>
+
+    <!-- Scatter, Bar Chart, Histogram & Bubble: Y-Axis Label -->
+     <div class="config-field scatter-field histogram-field barchart-field bubble-field">
+        <label for="config-y-label">Y-Axis Label:</label>
+        <input type="text" id="config-y-label" name="config-y-label">
+    </div>
+
+    <!-- == NEW CHART TYPE FIELDS == -->
+
+    <!-- Line Chart: Y-Axis Column(s) Checkboxes -->
+    <div id="config-y-cols-checkboxes" class="config-field line-field" style="border: 1px solid #ccc; padding: 10px; max-height: 150px; overflow-y: auto;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Y-Axis Columns (Select one or more):</label>
+        <!-- Checkboxes populated dynamically -->
+    </div>
+
+    <!-- Line Chart: Option for different line styles -->
+    <div class="config-field line-field">
+        <input type="checkbox" id="config-line-styles" name="config-line-styles" checked> <!-- Default to checked -->
+        <label for="config-line-styles" style="font-weight: normal; margin-left: 5px;">Use different line styles/patterns</label>
+    </div>
+
+    <!-- Box Plot: Column Selection -->
+    <div class="config-field boxplot-field">
+        <label for="config-boxplot-col">Column for Box Plot:</label>
+        <select id="config-boxplot-col" name="config-boxplot-col">
+            <option value="">Select Column</option>
+            <!-- Options populated dynamically -->
+        </select>
+    </div>
+     <!-- Box Plot: Optional Category Column -->
+    <div class="config-field boxplot-field">
+        <label for="config-boxplot-category-col">Category Column (Optional - for Grouping):</label>
+        <select id="config-boxplot-category-col" name="config-boxplot-category-col">
+            <option value="">Select Category Column (or leave blank)</option>
+            <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+    <!-- Heatmap: Info Text -->
+    <div class="config-field heatmap-field">
+        <p style="font-family: 'Open Sans'; font-size: 0.9em; color: #555;">
+            Heatmap will display the correlation matrix of all numeric columns.
+        </p>
+    </div>
+
+    <!-- Bubble Chart: Size Column -->
+    <div class="config-field bubble-field">
+        <label for="config-bubble-size-col">Bubble Size Column:</label>
+        <select id="config-bubble-size-col" name="config-bubble-size-col">
+            <option value="">Select Size Column</option>
+            <!-- Options populated dynamically -->
+        </select>
+    </div>
+    <!-- Bubble Chart: Optional Color Column -->
+    <div class="config-field bubble-field">
+        <label for="config-bubble-color-col">Bubble Color Column (Optional):</label>
+        <select id="config-bubble-color-col" name="config-bubble-color-col">
+            <option value="">Select Color Column (or leave blank)</option>
+            <!-- Options populated dynamically -->
+        </select>
+    </div>
+
+    <!-- == END NEW CHART TYPE FIELDS == -->
+
+    <!-- Create Button -->
+    <div>
+        <button id="create-chart-btn">Create Chart</button>
+    </div>
+
+    <script src="Functions.js" defer></script>
+</body>
+</html> 

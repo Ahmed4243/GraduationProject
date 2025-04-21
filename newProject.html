@@ -47,43 +47,7 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
-        .project-title {
-            font-family: 'Open Sans';
-            font-weight: 500;
-            font-size: 2em;
-            cursor: text;
-            padding: 8px 20px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            margin: 20px 0;
-            border: 2px solid transparent;
-            outline: none;
-            min-width: 300px;
-            text-align: center;
-            background: transparent;
-        }
-
-        .project-title:hover {
-            background: rgba(245, 245, 245, 0.6);
-        }
-
-        .project-title:focus {
-            border: 2px solid #0d8bf1;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(13, 139, 241, 0.15);
-        }
-
-        .project-title:empty::before {
-            content: "Untitled Project";
-            color: #888;
-        }
-
-        .project-title:focus:empty::before {
-            content: "";
-        }
-
-        .card-details {
+         .card-details {
              padding: 5px;
              text-align: center;
              flex-grow: 1;
@@ -260,59 +224,8 @@
             z-index: 1000;
         }
 
-        .cleaning-dialog {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            z-index: 1001;
-            min-width: 300px;
-        }
-
-        .cleaning-dialog label {
-            display: block;
-            margin: 10px 0 5px;
-            font-family: 'Open Sans';
-        }
-
-        .cleaning-dialog select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-
-        .cleaning-dialog-buttons {
-            margin-top: 15px;
-            text-align: right;
-        }
-
-        .cleaning-dialog-buttons button {
-            margin-left: 10px;
-            padding: 8px 15px;
-            cursor: pointer;
-        }
-
-        .cancelButton {
-            background-color: red;
-        }
-
-        .dialog-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
     </style>
+    <script src="Functions.js" defer></script>
 </head>
 <body>
     <div class="sidebar" style="width: 300px;">
@@ -337,16 +250,20 @@
         </div>
         <div class="block">
             <h1>Visualization</h1>
-            </div>
-        <div class="block">
-            <h1>Cleaning</h1>
             <div class="popup-menu">
-                <a href="#" id="handleMissingValues">Missing Values</a>
-                <a href="#" id="removeDuplicates">Remove Duplicates</a>
-                <a href="#" id="standardizeText">Standardize Text</a>
-                <a href="#" id="convertToNumeric">Convert to Numeric</a>
+                <a href="#" onclick="prepareAndOpenConfig('histogram'); return false;">Histogram</a>
+                <a href="#" onclick="prepareAndOpenConfig('barchart'); return false;">Bar Chart</a>
+                <a href="#" onclick="prepareAndOpenConfig('piechart'); return false;">Pie Chart</a>
+                <a href="#" onclick="prepareAndOpenConfig('scatter'); return false;">Scatter Plot</a>
+                <a href="#" onclick="prepareAndOpenConfig('line'); return false;">Line Chart</a>
+                <a href="#" onclick="prepareAndOpenConfig('boxplot'); return false;">Box Plot</a>
+                <a href="#" onclick="prepareAndOpenConfig('heatmap'); return false;">Heatmap</a>
+                <a href="#" onclick="prepareAndOpenConfig('bubble'); return false;">Bubble Chart</a>
             </div>
         </div>
+        <div class="block">
+            <h1>Cleaning</h1>
+             </div>
         <hr style="width: 80%;">
         <div class="block">
             <a href="" style="text-align: center;">
@@ -355,8 +272,7 @@
         </div>
     </div>
 
-    <div id="mainContentArea" class="main-content"> 
-        <div id="importSection">
+    <div id="mainContentArea" class="main-content"> <div id="importSection">
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
             <div class="flex-container1">
@@ -391,7 +307,7 @@
         </div>
 
         <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
-            <div class="project-title" contenteditable="true"></div>
+            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Untitled Project</p>
 
             <div style="display: flex; align-items: flex-start; width: auto; justify-content: center;">
                 <table id="dynamicTable" border="1">
@@ -408,65 +324,15 @@
                         </tr>
                     </tbody>
                 </table>
-                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> 
-            </div>
+                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> </div>
 
             <div style="margin-top: 10px;">
-                 <button id="addRow" style="margin-top: 10px;">+</button> 
-                 <button id="removeLastRow">-</button>
+                 <button id="addRow" style="margin-top: 10px;">+</button> <button id="removeLastRow">-</button>
             </div>
             <div id="stats-sections-container"></div>
         </div>
+
     </div> 
-
-    <div class="dialog-backdrop" id="missingValuesBackdrop"></div>
-    <div id="missingValuesDialog" class="cleaning-dialog">
-        <h3 style="margin-top: 0;">Handle Missing Values</h3>
-        <label for="missingValuesColumn">Column:</label>
-        <select id="missingValuesColumn"></select>
-        <div id="imputationMethods">
-            <label for="handlingMethod">Method:</label>
-            <select id="handlingMethod">
-                <option value="impute">Impute Values</option>
-                <option value="remove">Remove Rows</option>
-            </select>
-            <div id="imputationOptions" style="margin-top: 10px;">
-                <label for="imputationType">Imputation Type:</label>
-                <select id="imputationType">
-                    <option value="mean">Mean</option>
-                    <option value="median">Median</option>
-                    <option value="mode">Mode</option>
-                    <option value="previous">Previous Value</option>
-                </select>
-            </div>
-        </div>
-        <div class="cleaning-dialog-buttons">
-            <button id="cancelMissingValuesBtn" class="cancelButton">Cancel</button>
-            <button id="confirmMissingValuesBtn">Confirm</button>
-        </div>
-    </div>
-
-    <div class="dialog-backdrop" id="columnActionBackdrop"></div>
-    <div id="columnActionDialog" class="cleaning-dialog">
-        <h3 id="columnActionTitle" style="margin-top: 0;"></h3>
-        <label for="actionColumnSelect">Column:</label>
-        <select id="actionColumnSelect"></select>
-        <div class="cleaning-dialog-buttons">
-            <button id="cancelColumnActionBtn" class="cancelButton">Cancel</button>
-            <button id="confirmColumnActionBtn">Confirm</button>
-        </div>
-    </div>
-
-    <div class="dialog-backdrop" id="duplicateBackdrop"></div>
-    <div id="duplicateConfirmation" class="cleaning-dialog">
-        <h3>Remove Duplicates</h3>
-        <p>Are you sure you want to remove duplicate rows?</p>
-        <div class="cleaning-dialog-buttons">
-            <button id="cancelDuplicateBtn" class="cancelButton">Cancel</button>
-            <button id="confirmDuplicateBtn">Confirm</button>
-        </div>
-    </div>
-
     <div id="column-context-menu" class="context-menu">
         <div id="remove-column-option">Remove Column</div>
     </div>
@@ -474,36 +340,12 @@
         <div id="remove-row-option">Delete Row</div>
     </div>
 
+
     <script>
        function calculateMean(values) {
            if (values.length === 0) return 0;
            const sum = values.reduce((acc, val) => acc + val, 0);
            return sum / values.length;
-       }
-
-       function calculateMedian(values) {
-           if (values.length === 0) return 0;
-           const sorted = [...values].sort((a, b) => a - b);
-           const mid = Math.floor(sorted.length / 2);
-           return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-       }
-
-       function calculateMode(values) {
-           const frequency = {};
-           let maxFreq = 0;
-           let modes = [];
-           
-           values.forEach(value => {
-               frequency[value] = (frequency[value] || 0) + 1;
-               if (frequency[value] > maxFreq) {
-                   maxFreq = frequency[value];
-                   modes = [value];
-               } else if (frequency[value] === maxFreq) {
-                   modes.push(value);
-               }
-           });
-           
-           return modes.length === values.length ? [] : modes;
        }
 
        function calculateStdDev(values, mean) {
@@ -566,220 +408,6 @@
            });
         }
 
-        const projectTitle = document.querySelector('.project-title');
-        
-        projectTitle.addEventListener('keydown', (e) => {
-            if(e.key === 'Enter') {
-                e.preventDefault();
-                projectTitle.blur();
-            }
-        });
-
-        projectTitle.addEventListener('input', (e) => {
-            localStorage.setItem('projectName', e.target.textContent);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('projectName');
-            if(savedName) {
-                projectTitle.textContent = savedName;
-            }
-        });
-
-        let currentCleaningAction = null;
-
-        document.getElementById('handlingMethod').addEventListener('change', function() {
-            const imputationOptions = document.getElementById('imputationOptions');
-            imputationOptions.style.display = this.value === 'impute' ? 'block' : 'none';
-        });
-
-        function showMissingValuesDialog() {
-            document.getElementById('missingValuesBackdrop').style.display = 'block';
-            document.getElementById('missingValuesDialog').style.display = 'block';
-            populateColumnSelect('missingValuesColumn');
-            const methodSelect = document.getElementById('handlingMethod');
-            const imputationOptions = document.getElementById('imputationOptions');
-            imputationOptions.style.display = methodSelect.value === 'impute' ? 'block' : 'none';
-        }
-
-        function showColumnActionDialog(title) {
-            document.getElementById('columnActionBackdrop').style.display = 'block';
-            document.getElementById('columnActionDialog').style.display = 'block';
-            document.getElementById('columnActionTitle').textContent = title;
-            populateColumnSelect('actionColumnSelect');
-        }
-
-        function hideAllDialogs() {
-            document.querySelectorAll('.dialog-backdrop').forEach(d => d.style.display = 'none');
-            document.querySelectorAll('.cleaning-dialog').forEach(d => d.style.display = 'none');
-        }
-
-        function populateColumnSelect(selectId) {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '';
-            const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
-            headers.forEach((header, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = header.textContent;
-                select.appendChild(option);
-            });
-        }
-
-        function handleMissingValues() {
-            const colIndex = parseInt(document.getElementById('missingValuesColumn').value);
-            const method = document.getElementById('handlingMethod').value;
-            
-            if (method === 'remove') {
-                const rows = document.querySelectorAll('#dynamicTable tbody tr');
-                rows.forEach(row => {
-                    const cell = row.cells[colIndex + 1];
-                    if (!cell.textContent.trim()) {
-                        row.remove();
-                    }
-                });
-                updateRowNumbers();
-            } else {
-                const imputationType = document.getElementById('imputationType').value;
-                const rows = document.querySelectorAll('#dynamicTable tbody tr');
-                let imputeValue = null;
-                let previousValue = null;
-                
-                const numericValues = [];
-                rows.forEach(row => {
-                    const cell = row.cells[colIndex + 1];
-                    const value = parseFloat(cell.textContent);
-                    if (!isNaN(value)) {
-                        numericValues.push(value);
-                    }
-                });
-
-                switch(imputationType) {
-                    case 'mean':
-                        imputeValue = numericValues.length > 0 ? calculateMean(numericValues) : 0;
-                        break;
-                    case 'median':
-                        imputeValue = numericValues.length > 0 ? calculateMedian(numericValues) : 0;
-                        break;
-                    case 'mode':
-                        const modes = calculateMode(numericValues);
-                        imputeValue = modes.length > 0 ? modes[0] : 'N/A';
-                        break;
-                }
-
-                rows.forEach(row => {
-                    const cell = row.cells[colIndex + 1];
-                    if (!cell.textContent.trim()) {
-                        if (imputationType === 'previous') {
-                            if (previousValue !== null) {
-                                cell.textContent = previousValue;
-                            }
-                        } else {
-                            cell.textContent = imputeValue;
-                        }
-                    } else {
-                        previousValue = imputationType === 'previous' ? cell.textContent : previousValue;
-                    }
-                });
-            }
-            hideAllDialogs();
-        }
-
-        function standardizeText(colIndex) {
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            rows.forEach(row => {
-                const cell = row.cells[colIndex + 1];
-                cell.textContent = cell.textContent.trim().toLowerCase();
-            });
-        }
-
-        function convertToNumeric(colIndex) {
-        const rows = document.querySelectorAll('#dynamicTable tbody tr');
-        let hasInvalid = false;
-        
-        rows.forEach(row => {
-            const cell = row.cells[colIndex + 1];
-            let original = cell.textContent.trim();
-            
-            if (original === '') return;
-            
-            original = original.replace(/^"(.*)"$/, '$1');
-            
-            if (original.startsWith('INVALID: ')) return;
-
-            const number = parseFloat(original);
-            
-            if (isNaN(number)) {
-                cell.textContent = 'INVALID: ' + original;
-                hasInvalid = true;
-            } else {
-                cell.textContent = number.toString();
-            }
-        });
-        
-        if (hasInvalid) {
-            alert('Some values couldn\'t be converted. Invalid entries are marked with "INVALID: " prefix.');
-        }
-    }
-
-        function showRemovalFeedback(removedCount) {
-            if (removedCount > 0) {
-                alert(`${removedCount} duplicate rows were removed.`);
-            } else {
-                alert("No duplicate rows found.");
-            }
-        }
-
-        function removeDuplicates() {
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            const seen = new Set();
-            let removedCount = 0;
-            
-            Array.from(rows).reverse().forEach(row => {
-                const cells = Array.from(row.cells)
-                    .slice(1)
-                    .map(cell => cell.textContent.trim().toLowerCase());
-                const key = cells.join('|');
-                
-                if (seen.has(key)) {
-                    row.remove();
-                    removedCount++;
-                } else {
-                    seen.add(key);
-                }
-            });
-            
-            updateRowNumbers();
-            return removedCount;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const duplicateConfirmation = document.getElementById('duplicateConfirmation');
-            const duplicateBackdrop = document.getElementById('duplicateBackdrop');
-            
-            document.getElementById('removeDuplicates').addEventListener('click', (e) => {
-                e.preventDefault();
-                duplicateConfirmation.style.display = 'block';
-                duplicateBackdrop.style.display = 'block';
-            });
-
-            document.getElementById('confirmDuplicateBtn').addEventListener('click', () => {
-                const removedCount = removeDuplicates();
-                duplicateConfirmation.style.display = 'none';
-                duplicateBackdrop.style.display = 'none';
-                showRemovalFeedback(removedCount);
-            });
-
-            document.getElementById('cancelDuplicateBtn').addEventListener('click', () => {
-                duplicateConfirmation.style.display = 'none';
-                duplicateBackdrop.style.display = 'none';
-            });
-
-            duplicateBackdrop.addEventListener('click', () => {
-                duplicateConfirmation.style.display = 'none';
-                duplicateBackdrop.style.display = 'none';
-            });
-        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const showDataFrameLink = document.getElementById('showDataFrameLink');
@@ -799,41 +427,9 @@
             const rowContextMenu = document.getElementById('row-context-menu');
             const removeRowOption = document.getElementById('remove-row-option');
 
-            document.getElementById('handleMissingValues').addEventListener('click', (e) => {
-                e.preventDefault();
-                currentCleaningAction = 'missing';
-                showMissingValuesDialog();
-            });
+            let columnToRemoveIndex = -1;
+            let rowToRemoveIndex = -1;
 
-            document.getElementById('standardizeText').addEventListener('click', (e) => {
-                e.preventDefault();
-                currentCleaningAction = 'standardize';
-                showColumnActionDialog('Standardize Text');
-            });
-
-            document.getElementById('convertToNumeric').addEventListener('click', (e) => {
-                e.preventDefault();
-                currentCleaningAction = 'convert';
-                showColumnActionDialog('Convert to Numeric');
-            });
-
-            document.getElementById('confirmMissingValuesBtn').addEventListener('click', handleMissingValues);
-            document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
-            
-            document.getElementById('confirmColumnActionBtn').addEventListener('click', () => {
-                const colIndex = parseInt(document.getElementById('actionColumnSelect').value);
-                if (currentCleaningAction === 'standardize') {
-                    standardizeText(colIndex);
-                } else if (currentCleaningAction === 'convert') {
-                    convertToNumeric(colIndex);
-                }
-                hideAllDialogs();
-            });
-            document.getElementById('cancelColumnActionBtn').addEventListener('click', hideAllDialogs);
-
-            document.querySelectorAll('.dialog-backdrop').forEach(backdrop => {
-                backdrop.addEventListener('click', hideAllDialogs);
-            });
 
             if (showDataFrameLink) {
                  showDataFrameLink.addEventListener('click', (e) => {
@@ -879,7 +475,8 @@
                 newHeader.style.backgroundColor = "#0d8bf1";
                 newHeader.style.fontWeight = "bold";
                 
-                const currentColumnCount = headerRow.cells.length - 1;
+                // Correct column count calculation
+                const currentColumnCount = headerRow.cells.length - 1; // Subtract row number column
                 newHeader.textContent = `Feature ${currentColumnCount + 1}`;
                 
                 headerRow.appendChild(newHeader);
@@ -1224,6 +821,67 @@
             });
 
         });
+
+        // --- New Function to prepare and open config --- 
+        function prepareAndOpenConfig(chartType) {
+            console.log(`Preparing config for: ${chartType}`);
+            const tableHead = document.querySelector('#dynamicTable thead');
+            const tableBody = document.querySelector('#dynamicTable tbody');
+
+            if (!tableHead || !tableHead.rows[0] || !tableBody) {
+                alert("Error: Cannot find table headers or body.");
+                return;
+            }
+
+            // Extract Column Names
+            const headerCells = tableHead.rows[0].cells;
+            const columnNames = [];
+            for (let i = 1; i < headerCells.length; i++) { // Skip row number column
+                columnNames.push(headerCells[i].textContent || `Column ${i}`);
+            }
+
+            if (columnNames.length === 0) {
+                alert("Error: No data columns found in the table.");
+                return;
+            }
+
+            // Extract Table Data
+            const tableData = [];
+            const rows = tableBody.rows;
+            for (let i = 0; i < rows.length; i++) {
+                const rowData = {};
+                const cells = rows[i].cells;
+                for (let j = 1; j < cells.length; j++) { // Skip row number cell
+                    const columnName = columnNames[j-1]; // Map cell to column name
+                    // Attempt to parse as number, otherwise keep as string
+                    const cellValue = cells[j].textContent.trim();
+                    const numericValue = parseFloat(cellValue);
+                    rowData[columnName] = isNaN(numericValue) ? cellValue : numericValue;
+                }
+                tableData.push(rowData);
+            }
+
+            if (tableData.length === 0) {
+                alert("Error: No data rows found in the table.");
+                return;
+            }
+
+            // Store both columns and data
+            console.log("Storing columns:", columnNames);
+            sessionStorage.setItem('currentColumns', JSON.stringify(columnNames));
+            console.log("Storing table data:", tableData);
+            sessionStorage.setItem('currentTableData', JSON.stringify(tableData));
+
+            // Now call the function (from Functions.js) to open the window
+            // Ensure Functions.js is loaded and openConfigPage is globally accessible
+             if (typeof openConfigPage === 'function') {
+                openConfigPage(chartType);
+             } else {
+                console.error("openConfigPage function not found. Ensure Functions.js is loaded.");
+                alert("Configuration Error: Cannot open config window.");
+             }
+        }
+        // --- End of New Function ---
     </script>
 
 </body>
