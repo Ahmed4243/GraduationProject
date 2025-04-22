@@ -364,7 +364,7 @@
                     <div class="card-details">
                         <img src="images/excel.svg" style="height: 100%; width: 100%;">
                     </div>
-                    <button class="card-button">Import from Excel</button>
+                    <button class="card-button" id="excelImportButton">Import from Excel</button>
                 </div>
                 <div class="card" style="background-color: #fff2005b ">
                     <div class="card-details">
@@ -475,6 +475,74 @@
     </div>
 
     <script>
+        const XLSX = require('xlsx');
+       document.getElementById('excelImportButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx, .xls';
+    
+    input.onchange = async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const buffer = await file.arrayBuffer();
+            
+            const workbook = XLSX.read(buffer, { type: 'array' });
+            
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            const table = document.getElementById('dynamicTable');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th class="row-number"></th>';
+            
+            if(jsonData.length > 0) {
+                jsonData[0].forEach((header, index) => {
+                    const th = document.createElement('th');
+                    th.contentEditable = true;
+                    th.style.backgroundColor = "#0d8bf1";
+                    th.style.fontWeight = "bold";
+                    th.textContent = header?.toString() || `Feature ${index + 1}`;
+                    headerRow.appendChild(th);
+                });
+            }
+            thead.appendChild(headerRow);
+
+            for(let i = 1; i < jsonData.length; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="row-number">${i}</td>`;
+                
+                jsonData[i].forEach(cell => {
+                    const td = document.createElement('td');
+                    td.contentEditable = true;
+                    td.textContent = cell?.toString() || '';
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            }
+
+            document.getElementById('importSection').style.display = 'none';
+            document.getElementById('dataframeSection').style.display = 'flex';
+            updateRowNumbers();
+            updateColumnSelect();
+            
+        } catch (error) {
+            alert('Error processing Excel file: ' + error.message);
+            console.error('Excel import error:', error);
+        }
+    };
+    input.click();
+});
        function calculateMean(values) {
            if (values.length === 0) return 0;
            const sum = values.reduce((acc, val) => acc + val, 0);
