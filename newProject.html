@@ -47,7 +47,43 @@
             flex-direction: column;
             justify-content: space-between;
         }
-         .card-details {
+
+        .project-title {
+            font-family: 'Open Sans';
+            font-weight: 500;
+            font-size: 2em;
+            cursor: text;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin: 20px 0;
+            border: 2px solid transparent;
+            outline: none;
+            min-width: 300px;
+            text-align: center;
+            background: transparent;
+        }
+
+        .project-title:hover {
+            background: rgba(245, 245, 245, 0.6);
+        }
+
+        .project-title:focus {
+            border: 2px solid #0d8bf1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(13, 139, 241, 0.15);
+        }
+
+        .project-title:empty::before {
+            content: "Untitled Project";
+            color: #888;
+        }
+
+        .project-title:focus:empty::before {
+            content: "";
+        }
+
+        .card-details {
              padding: 5px;
              text-align: center;
              flex-grow: 1;
@@ -224,6 +260,170 @@
             z-index: 1000;
         }
 
+        .cleaning-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1001;
+            min-width: 300px;
+        }
+
+        .cleaning-dialog label {
+            display: block;
+            margin: 10px 0 5px;
+            font-family: 'Open Sans';
+        }
+
+        .cleaning-dialog select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cleaning-dialog-buttons {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .cleaning-dialog-buttons button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .cancelButton {
+            background-color: red;
+        }
+
+        .dialog-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+
+        .block:hover .popup-menu {
+            display: block;
+        }
+
+        #dynamicTable {
+             margin-bottom: 10px;
+         }
+         #dynamicTable th, #dynamicTable td {
+             padding: 15px; 
+         }
+         #dynamicTable td[contenteditable="true"]:focus {
+            outline: 2px solid #f1960d;
+         }
+        #addColumn, #addRow, #removeLastRow {
+             margin: 5px;
+             padding: 5px 10px;
+             cursor: pointer;
+         }
+         #addColumn { margin-left: 10px; height: 30px;}
+         #addRow { margin-top: 10px;}
+         #removeLastRow {
+            background-color: #f44336;
+         }
+         #stats-sections-container {
+             width: 100%;
+             margin-top: 20px;
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
+             align-items: center;
+         }
+         #stats-sections-container > div {
+             margin-top: 20px;
+             border: 1px solid #ccc;
+             padding: 15px;
+             width: auto;
+             max-width: 90%;
+         }
+         #stats-sections-container label { font-family: 'Open Sans'; font-size: 1em;}
+         #stats-sections-container select { margin-right: 10px;}
+         #stats-sections-container button { margin-left: 10px;}
+         #stats-sections-container .remove-button {
+              background-color: #f44336;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              padding: 5px 10px;
+              cursor: pointer;
+              margin-left: auto;
+          }
+         #stats-sections-container .stats-output,
+         #stats-sections-container .correlation-output {
+              margin-top: 10px;
+              font-family: 'Open Sans';
+              font-size: 1em;
+              width: 100%;
+              padding-top: 5px;
+              line-height: 1.4;
+          }
+         #stats-sections-container .stats-output strong,
+         #stats-sections-container .correlation-output strong{
+             margin-right: 4px;
+         }
+        .context-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 5px 0;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        .context-menu div {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95em;
+        }
+        .context-menu div:hover {
+            background-color: #f0f0f0;
+        }
+        .row-number {
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            text-align: center;
+            background-color: #f0f0f0 !important;
+            user-select: none;
+        }
+        #dynamicTable th:first-child,
+        #dynamicTable td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            background-color: #117c9f;
+            box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+
         /* KNN Styles */
         #knn-section {
             margin-top: 20px;
@@ -268,8 +468,6 @@
             <h1>Insert</h1>
             <div class="popup-menu">
                 <a href="#" id="showDataFrameLink">DataFrame</a>
-                <a href="#">Add Rows</a>
-                <a href="#">Add Columns</a>
             </div>
         </div>
         <div class="block">
@@ -290,7 +488,13 @@
             </div>
         <div class="block">
             <h1>Cleaning</h1>
-             </div>
+            <div class="popup-menu">
+                <a href="#" id="handleMissingValues">Missing Values</a>
+                <a href="#" id="removeDuplicates">Remove Duplicates</a>
+                <a href="#" id="standardizeText">Standardize Text</a>
+                <a href="#" id="convertToNumeric">Convert to Numeric</a>
+            </div>
+        </div>
         <hr style="width: 80%;">
         <div class="block">
             <a href="" style="text-align: center;">
@@ -299,7 +503,8 @@
         </div>
     </div>
 
-    <div id="mainContentArea" class="main-content"> <div id="importSection">
+    <div id="mainContentArea" class="main-content"> 
+        <div id="importSection">
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em; margin-bottom: 0;">Your report is empty</p>
             <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 1em;">Add data to your report</p>
             <div class="flex-container1">
@@ -307,7 +512,7 @@
                     <div class="card-details">
                         <img src="images/excel.svg" style="height: 100%; width: 100%;">
                     </div>
-                    <button class="card-button">Import from Excel</button>
+                    <button class="card-button" id="excelImportButton">Import from Excel</button>
                 </div>
                 <div class="card" style="background-color: #fff2005b ">
                     <div class="card-details">
@@ -334,7 +539,7 @@
         </div>
 
         <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
-            <p style="font-family: 'Open Sans'; font-weight: 500; font-size: 2em;">Untitled Project</p>
+            <div class="project-title" contenteditable="true"></div>
 
             <div style="display: flex; align-items: flex-start; width: auto; justify-content: center;">
                 <table id="dynamicTable" border="1">
@@ -351,51 +556,204 @@
                         </tr>
                     </tbody>
                 </table>
-                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> </div>
+                <button id="addColumn" style="margin-left: 10px; height: 30px;">+</button> 
+            </div>
 
             <div style="margin-top: 10px;">
-                 <button id="addRow" style="margin-top: 10px;">+</button> <button id="removeLastRow">-</button>
+                 <button id="addRow" style="margin-top: 10px;">+</button> 
+                 <button id="removeLastRow">-</button>
             </div>
             <div id="stats-sections-container"></div>
-            
+            <div id="analysis-sections-container"></div>
             <!-- KNN Section -->
-            <div id="knn-section" style="display: none;">
-                <h3>KNN Prediction</h3>
-                <div class="knn-controls">
+            <template id="knn-template">
+                <div class="knn-section">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>KNN Prediction</h3>
+                    <button class="remove-knn-section">Remove</button>
+                  </div>
+                  
+                  <div class="knn-controls">
                     <div class="knn-select-container">
-                        <label>Features (Select Multiple):</label>
-                        <select id="knn-features" multiple style="width: 200px; height: 100px;"></select>
+                      <label>Features (Select Multiple):</label>
+                      <select class="knn-features" multiple></select>
                     </div>
+                    
                     <div class="knn-select-container">
-                        <label>Target:</label>
-                        <select id="knn-target" style="width: 200px;"></select>
+                      <label>Target:</label>
+                      <select class="knn-target"></select>
                     </div>
-                    <div class="knn-params">
-                        <label>Neighbors (K):</label>
-                        <input type="number" id="k-value" min="1" value="5" style="width: 50px;">
+                    
+                    <div class="knn-select-container">
+                      <label>Neighbors (K):</label>
+                      <input type="number" class="k-value" min="1" value="5">
                     </div>
+                  </div>
+                  
+                  <div class="knn-buttons">
+                    <button class="make-prediction">Make Prediction</button>
+                    <button class="reset-knn">Reset</button>
+                  </div>
+                  
+                  <div class="knn-results"></div>
                 </div>
-                <div class="knn-buttons">
-                    <button id="make-prediction">Make Prediction</button>
-                    <button id="reset-knn" style="background-color: #f44336;">Reset</button>
-                </div>
-                <div id="knn-results"></div>
+              </template>
+        </div>
+    </div> 
+
+    <div class="dialog-backdrop" id="missingValuesBackdrop"></div>
+    <div id="missingValuesDialog" class="cleaning-dialog">
+        <h3 style="margin-top: 0;">Handle Missing Values</h3>
+        <label for="missingValuesColumn">Column:</label>
+        <select id="missingValuesColumn"></select>
+        <div id="imputationMethods">
+            <label for="handlingMethod">Method:</label>
+            <select id="handlingMethod">
+                <option value="impute">Impute Values</option>
+                <option value="remove">Remove Rows</option>
+            </select>
+            <div id="imputationOptions" style="margin-top: 10px;">
+                <label for="imputationType">Imputation Type:</label>
+                <select id="imputationType">
+                    <option value="mean">Mean</option>
+                    <option value="median">Median</option>
+                    <option value="mode">Mode</option>
+                    <option value="previous">Previous Value</option>
+                </select>
             </div>
         </div>
-
-        <div id="column-context-menu" class="context-menu">
-            <div id="remove-column-option">Remove Column</div>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelMissingValuesBtn" class="cancelButton">Cancel</button>
+            <button id="confirmMissingValuesBtn">Confirm</button>
         </div>
-        <div id="row-context-menu" class="context-menu">
-            <div id="remove-row-option">Delete Row</div>
-        </div>
+    </div>
 
+    <div class="dialog-backdrop" id="columnActionBackdrop"></div>
+    <div id="columnActionDialog" class="cleaning-dialog">
+        <h3 id="columnActionTitle" style="margin-top: 0;"></h3>
+        <label for="actionColumnSelect">Column:</label>
+        <select id="actionColumnSelect"></select>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelColumnActionBtn" class="cancelButton">Cancel</button>
+            <button id="confirmColumnActionBtn">Confirm</button>
+        </div>
+    </div>
+
+    <div class="dialog-backdrop" id="duplicateBackdrop"></div>
+    <div id="duplicateConfirmation" class="cleaning-dialog">
+        <h3>Remove Duplicates</h3>
+        <p>Are you sure you want to remove duplicate rows?</p>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelDuplicateBtn" class="cancelButton">Cancel</button>
+            <button id="confirmDuplicateBtn">Confirm</button>
+        </div>
+    </div>
+
+    <div id="column-context-menu" class="context-menu">
+        <div id="remove-column-option">Remove Column</div>
+    </div>
+    <div id="row-context-menu" class="context-menu">
+        <div id="remove-row-option">Delete Row</div>
+    </div>
 
     <script>
+        const XLSX = require('xlsx');
+       document.getElementById('excelImportButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx, .xls';
+    
+    input.onchange = async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const buffer = await file.arrayBuffer();
+            
+            const workbook = XLSX.read(buffer, { type: 'array' });
+            
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            const table = document.getElementById('dynamicTable');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th class="row-number"></th>';
+            
+            if(jsonData.length > 0) {
+                jsonData[0].forEach((header, index) => {
+                    const th = document.createElement('th');
+                    th.contentEditable = true;
+                    th.style.backgroundColor = "#0d8bf1";
+                    th.style.fontWeight = "bold";
+                    th.textContent = header?.toString() || `Feature ${index + 1}`;
+                    headerRow.appendChild(th);
+                });
+            }
+            thead.appendChild(headerRow);
+
+            for(let i = 1; i < jsonData.length; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="row-number">${i}</td>`;
+                
+                jsonData[i].forEach(cell => {
+                    const td = document.createElement('td');
+                    td.contentEditable = true;
+                    td.textContent = cell?.toString() || '';
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            }
+
+            document.getElementById('importSection').style.display = 'none';
+            document.getElementById('dataframeSection').style.display = 'flex';
+            updateRowNumbers();
+            updateColumnSelect();
+            
+        } catch (error) {
+            alert('Error processing Excel file: ' + error.message);
+            console.error('Excel import error:', error);
+        }
+    };
+    input.click();
+});
        function calculateMean(values) {
            if (values.length === 0) return 0;
            const sum = values.reduce((acc, val) => acc + val, 0);
            return sum / values.length;
+       }
+
+       function calculateMedian(values) {
+           if (values.length === 0) return 0;
+           const sorted = [...values].sort((a, b) => a - b);
+           const mid = Math.floor(sorted.length / 2);
+           return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+       }
+
+       function calculateMode(values) {
+           const frequency = {};
+           let maxFreq = 0;
+           let modes = [];
+           
+           values.forEach(value => {
+               frequency[value] = (frequency[value] || 0) + 1;
+               if (frequency[value] > maxFreq) {
+                   maxFreq = frequency[value];
+                   modes = [value];
+               } else if (frequency[value] === maxFreq) {
+                   modes.push(value);
+               }
+           });
+           
+           return modes.length === values.length ? [] : modes;
        }
 
        function calculateStdDev(values, mean) {
@@ -458,6 +816,231 @@
            });
         }
 
+        const projectTitle = document.querySelector('.project-title');
+        
+        projectTitle.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                projectTitle.blur();
+            }
+        });
+
+        projectTitle.addEventListener('input', (e) => {
+            localStorage.setItem('projectName', e.target.textContent);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('projectName');
+            if(savedName) {
+                projectTitle.textContent = savedName;
+            }
+        });
+
+        let currentCleaningAction = null;
+
+        document.getElementById('handlingMethod').addEventListener('change', function() {
+            const imputationOptions = document.getElementById('imputationOptions');
+            imputationOptions.style.display = this.value === 'impute' ? 'block' : 'none';
+        });
+
+        function showMissingValuesDialog() {
+            document.getElementById('missingValuesBackdrop').style.display = 'block';
+            document.getElementById('missingValuesDialog').style.display = 'block';
+            populateColumnSelect('missingValuesColumn');
+            const methodSelect = document.getElementById('handlingMethod');
+            const imputationOptions = document.getElementById('imputationOptions');
+            imputationOptions.style.display = methodSelect.value === 'impute' ? 'block' : 'none';
+        }
+
+        function showColumnActionDialog(title) {
+            document.getElementById('columnActionBackdrop').style.display = 'block';
+            document.getElementById('columnActionDialog').style.display = 'block';
+            document.getElementById('columnActionTitle').textContent = title;
+            populateColumnSelect('actionColumnSelect');
+        }
+
+        function hideAllDialogs() {
+            document.querySelectorAll('.dialog-backdrop').forEach(d => d.style.display = 'none');
+            document.querySelectorAll('.cleaning-dialog').forEach(d => d.style.display = 'none');
+        }
+
+        function populateColumnSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '';
+            const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+            headers.forEach((header, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = header.textContent;
+                select.appendChild(option);
+            });
+        }
+
+        function handleMissingValues() {
+            const colIndex = parseInt(document.getElementById('missingValuesColumn').value);
+            const method = document.getElementById('handlingMethod').value;
+            
+            if (method === 'remove') {
+                const rows = document.querySelectorAll('#dynamicTable tbody tr');
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    if (!cell.textContent.trim()) {
+                        row.remove();
+                    }
+                });
+                updateRowNumbers();
+            } else {
+                const imputationType = document.getElementById('imputationType').value;
+                const rows = document.querySelectorAll('#dynamicTable tbody tr');
+                let imputeValue = null;
+                let previousValue = null;
+                
+                const numericValues = [];
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    const value = parseFloat(cell.textContent);
+                    if (!isNaN(value)) {
+                        numericValues.push(value);
+                    }
+                });
+
+                switch(imputationType) {
+                    case 'mean':
+                        imputeValue = numericValues.length > 0 ? calculateMean(numericValues) : 0;
+                        break;
+                    case 'median':
+                        imputeValue = numericValues.length > 0 ? calculateMedian(numericValues) : 0;
+                        break;
+                    case 'mode':
+                        const modes = calculateMode(numericValues);
+                        imputeValue = modes.length > 0 ? modes[0] : 'N/A';
+                        break;
+                }
+
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    if (!cell.textContent.trim()) {
+                        if (imputationType === 'previous') {
+                            if (previousValue !== null) {
+                                cell.textContent = previousValue;
+                            }
+                        } else {
+                            cell.textContent = imputeValue;
+                        }
+                    } else {
+                        previousValue = imputationType === 'previous' ? cell.textContent : previousValue;
+                    }
+                });
+            }
+            hideAllDialogs();
+        }
+
+        function addAnalysisSection(section) {
+            const container = document.getElementById('stats-sections-container');
+            // Insert new section before the first child (top of container)
+            if (container.firstChild) {
+              container.insertBefore(section, container.firstChild);
+            } else {
+              container.appendChild(section); // If empty container
+            }
+            return section; // Return for chaining
+          }
+
+        function standardizeText(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                cell.textContent = cell.textContent.trim().toLowerCase();
+            });
+        }
+
+        function convertToNumeric(colIndex) {
+        const rows = document.querySelectorAll('#dynamicTable tbody tr');
+        let hasInvalid = false;
+        
+        rows.forEach(row => {
+            const cell = row.cells[colIndex + 1];
+            let original = cell.textContent.trim();
+            
+            if (original === '') return;
+            
+            original = original.replace(/^"(.*)"$/, '$1');
+            
+            if (original.startsWith('INVALID: ')) return;
+
+            const number = parseFloat(original);
+            
+            if (isNaN(number)) {
+                cell.textContent = 'INVALID: ' + original;
+                hasInvalid = true;
+            } else {
+                cell.textContent = number.toString();
+            }
+        });
+        
+        if (hasInvalid) {
+            alert('Some values couldn\'t be converted. Invalid entries are marked with "INVALID: " prefix.');
+        }
+    }
+
+        function showRemovalFeedback(removedCount) {
+            if (removedCount > 0) {
+                alert(`${removedCount} duplicate rows were removed.`);
+            } else {
+                alert("No duplicate rows found.");
+            }
+        }
+
+        function removeDuplicates() {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const seen = new Set();
+            let removedCount = 0;
+            
+            Array.from(rows).reverse().forEach(row => {
+                const cells = Array.from(row.cells)
+                    .slice(1)
+                    .map(cell => cell.textContent.trim().toLowerCase());
+                const key = cells.join('|');
+                
+                if (seen.has(key)) {
+                    row.remove();
+                    removedCount++;
+                } else {
+                    seen.add(key);
+                }
+            });
+            
+            updateRowNumbers();
+            return removedCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const duplicateConfirmation = document.getElementById('duplicateConfirmation');
+            const duplicateBackdrop = document.getElementById('duplicateBackdrop');
+            
+            document.getElementById('removeDuplicates').addEventListener('click', (e) => {
+                e.preventDefault();
+                duplicateConfirmation.style.display = 'block';
+                duplicateBackdrop.style.display = 'block';
+            });
+
+            document.getElementById('confirmDuplicateBtn').addEventListener('click', () => {
+                const removedCount = removeDuplicates();
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+                showRemovalFeedback(removedCount);
+            });
+
+            document.getElementById('cancelDuplicateBtn').addEventListener('click', () => {
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+            });
+
+            duplicateBackdrop.addEventListener('click', () => {
+                duplicateConfirmation.style.display = 'none';
+                duplicateBackdrop.style.display = 'none';
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const showDataFrameLink = document.getElementById('showDataFrameLink');
@@ -477,6 +1060,42 @@
             const removeColumnOption = document.getElementById('remove-column-option');
             const rowContextMenu = document.getElementById('row-context-menu');
             const removeRowOption = document.getElementById('remove-row-option');
+
+            document.getElementById('handleMissingValues').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'missing';
+                showMissingValuesDialog();
+            });
+
+            document.getElementById('standardizeText').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'standardize';
+                showColumnActionDialog('Standardize Text');
+            });
+
+            document.getElementById('convertToNumeric').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'convert';
+                showColumnActionDialog('Convert to Numeric');
+            });
+
+            document.getElementById('confirmMissingValuesBtn').addEventListener('click', handleMissingValues);
+            document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
+            
+            document.getElementById('confirmColumnActionBtn').addEventListener('click', () => {
+                const colIndex = parseInt(document.getElementById('actionColumnSelect').value);
+                if (currentCleaningAction === 'standardize') {
+                    standardizeText(colIndex);
+                } else if (currentCleaningAction === 'convert') {
+                    convertToNumeric(colIndex);
+                }
+                hideAllDialogs();
+            });
+            document.getElementById('cancelColumnActionBtn').addEventListener('click', hideAllDialogs);
+
+            document.querySelectorAll('.dialog-backdrop').forEach(backdrop => {
+                backdrop.addEventListener('click', hideAllDialogs);
+            });
             const knnSection = document.getElementById('knn-section');
 
             let columnToRemoveIndex = -1;
@@ -669,8 +1288,7 @@
                  correlationSection.appendChild(calculateButton);
                  correlationSection.appendChild(removeButton);
                  correlationSection.appendChild(correlationOutput);
-                 statsSectionsContainer.appendChild(correlationSection);
-
+                 statsSectionsContainer.appendChild(correlationSection)
                  removeButton.addEventListener('click', () => {
                      statsSectionsContainer.removeChild(correlationSection);
                  });
@@ -836,10 +1454,11 @@
 
              // KNN Option Click Handler
              knnOption.addEventListener('click', (e) => {
-                 e.preventDefault();
-                 knnSection.style.display = 'block';
-                 updateKnnSelects();
-             });
+                e.preventDefault();
+                const knnSection = document.getElementById('knn-section');
+                knnSection.style.display = 'block';
+                updateKnnSelects();
+            });
 
             table.addEventListener('keydown', function(event) {
                  if (event.key === 'Enter') {
@@ -884,278 +1503,376 @@
         });
 
         // KNN Implementation Classes
-        class StandardScaler {
-            fitTransform(data) {
-                this.means = [];
-                this.stds = [];
-                
-                if (data.length === 0) return [];
-                
-                const numFeatures = data[0].length;
-                for (let i = 0; i < numFeatures; i++) {
-                    const featureValues = data.map(row => row[i]);
-                    const mean = featureValues.reduce((a, b) => a + b, 0) / featureValues.length;
-                    const std = Math.sqrt(featureValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / featureValues.length);
-                    
-                    this.means.push(mean);
-                    this.stds.push(std || 1);
-                }
-                
-                return this.transform(data);
-            }
+      // KNN Implementation Classes
+class StandardScaler {
+    fitTransform(data) {
+        this.means = [];
+        this.stds = [];
+        
+        if (data.length === 0) return [];
+        
+        const numFeatures = data[0].length;
+        for (let i = 0; i < numFeatures; i++) {
+            const featureValues = data.map(row => row[i]);
+            const mean = featureValues.reduce((a, b) => a + b, 0) / featureValues.length;
+            const std = Math.sqrt(featureValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / featureValues.length);
             
-            transform(data) {
-                return data.map(row => 
-                    row.map((val, i) => 
-                        (val - this.means[i]) / this.stds[i]
-                    )
-                );
-            }
+            this.means.push(mean);
+            this.stds.push(std || 1);
         }
+        
+        return this.transform(data);
+    }
+    
+    transform(data) {
+        return data.map(row => 
+            row.map((val, i) => 
+                (val - this.means[i]) / this.stds[i]
+            )
+        );
+    }
+}
 
-        class KNeighborsClassifier {
-            constructor(k = 5) {
-                this.k = k;
-            }
+class KNeighborsClassifier {
+    constructor(k = 5) {
+        this.k = k;
+    }
+    
+    fit(X, y) {
+        this.X_train = X;
+        this.y_train = y;
+    }
+    
+    predict(X_test) {
+        return X_test.map(testPoint => {
+            const distances = this.X_train.map((trainPoint, i) => ({
+                label: this.y_train[i],
+                distance: Math.sqrt(
+                    trainPoint.reduce((sum, val, j) => 
+                        sum + Math.pow(val - testPoint[j], 2), 0)
+                )
+            }));
             
-            fit(X, y) {
-                this.X_train = X;
-                this.y_train = y;
-            }
+            const nearest = distances
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, this.k);
             
-            predict(X_test) {
-                return X_test.map(testPoint => {
-                    const distances = this.X_train.map((trainPoint, i) => ({
-                        label: this.y_train[i],
-                        distance: Math.sqrt(
-                            trainPoint.reduce((sum, val, j) => 
-                                sum + Math.pow(val - testPoint[j], 2), 0)
-                        )
-                    }));
-                    
-                    const nearest = distances
-                        .sort((a, b) => a.distance - b.distance)
-                        .slice(0, this.k);
-                    
-                    const votes = {};
-                    nearest.forEach(n => {
-                        votes[n.label] = (votes[n.label] || 0) + 1;
-                    });
-                    
-                    return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
-                });
-            }
+            const votes = {};
+            nearest.forEach(n => {
+                votes[n.label] = (votes[n.label] || 0) + 1;
+            });
+            
+            return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+        });
+    }
+}
+
+// KNN Section Management
+knnOption.addEventListener('click', (e) => {
+    e.preventDefault();
+    addKnnSection();
+});
+
+function addKnnSection() {
+  const template = document.getElementById('knn-template');
+  const clone = template.content.cloneNode(true);
+  const knnSection = clone.querySelector('.knn-section');
+  
+  // Replace the appendChild with our new function
+  addAnalysisSection(knnSection);
+  
+  updateKnnSelects(knnSection);
+  setupKnnSection(knnSection);
+}
+
+function setupKnnSection(section) {
+    const makePredictionBtn = section.querySelector('.make-prediction');
+    const resetBtn = section.querySelector('.reset-knn');
+    const removeBtn = section.querySelector('.remove-knn-section');
+    
+    makePredictionBtn.addEventListener('click', () => {
+        makePrediction(section);
+    });
+    
+    resetBtn.addEventListener('click', () => {
+        resetKnn(section);
+    });
+    
+    removeBtn.addEventListener('click', () => {
+        section.remove();
+    });
+}
+
+function updateKnnSelects(section) {
+    const featuresSelect = section.querySelector('.knn-features');
+    const targetSelect = section.querySelector('.knn-target');
+    const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+    
+    const selectedFeatures = new Set(Array.from(featuresSelect.selectedOptions).map(opt => opt.value));
+    const selectedTarget = targetSelect.value;
+    
+    featuresSelect.innerHTML = '';
+    targetSelect.innerHTML = '';
+    
+    headerCells.forEach((header, index) => {
+        if (header.textContent !== 'Prediction') {
+            const featureOption = document.createElement('option');
+            featureOption.value = index;
+            featureOption.text = header.textContent || `Column ${index + 1}`;
+            featuresSelect.appendChild(featureOption.cloneNode(true));
+            targetSelect.appendChild(featureOption);
         }
+    });
+}
 
-        // Event listeners
-        document.getElementById('make-prediction').addEventListener('click', makePrediction);
-        document.getElementById('reset-knn').addEventListener('click', resetKnn);
+function makePrediction(section) {
+    if (!section.knnModel) {
+        trainAndPredict(section);
+    } else {
+        predictWithKnn(section);
+    }
+}
 
-        function makePrediction() {
-            if (!window.knnModel) {
-                trainAndPredict();
-            } else {
-                predictWithKnn();
-            }
-        }
-
-        function trainAndPredict() {
-            const featuresSelect = document.getElementById('knn-features');
-            const targetSelect = document.getElementById('knn-target');
-            const kValue = document.getElementById('k-value').value;
-            
-            const selectedFeatures = Array.from(featuresSelect.selectedOptions).map(opt => parseInt(opt.value));
-            const selectedTarget = parseInt(targetSelect.value);
-            
-            if (selectedFeatures.length === 0) {
-                alert("Please select at least one feature");
-                return;
-            }
-            
-            // Get data from table
-            const X = [];
-            const y = [];
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            const headerRow = document.querySelector('#dynamicTable thead tr');
-            
-            for (let i = 0; i < rows.length; i++) {
-                const featureValues = [];
-                let hasEmpty = false;
-                
-                for (const featureIndex of selectedFeatures) {
-                    const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
-                    if (cell) {
-                        const valueText = cell.innerText.trim();
-                        if (valueText === '') {
-                            hasEmpty = true;
-                            break;
-                        }
-                        const value = parseFloat(valueText);
-                        if (isNaN(value)) {
-                            hasEmpty = true;
-                            break;
-                        }
-                        featureValues.push(value);
-                    }
-                }
-                
-                const targetCell = rows[i].cells[selectedTarget + 1]; // +1 to account for row number column
-                if (targetCell && !hasEmpty) {
-                    const targetText = targetCell.innerText.trim();
-                    if (targetText !== '') {
-                        y.push(targetText);
-                        X.push(featureValues);
-                    }
-                }
-            }
-            
-            if (X.length < 2) {
-                document.getElementById('knn-results').innerHTML = 
-                    "<strong>Error:</strong> Not enough valid data for training (need at least 2 samples)";
-                return;
-            }
-            
-            // Scale features
-            const scaler = new StandardScaler();
-            const X_scaled = scaler.fitTransform(X);
-            
-            // Train KNN
-            const knn = new KNeighborsClassifier(parseInt(kValue));
-            knn.fit(X_scaled, y);
-            
-            // Store model for predictions
-            window.knnModel = knn;
-            window.knnScaler = scaler;
-            window.knnFeatures = selectedFeatures;
-            window.knnTarget = selectedTarget;
-            
-            // Make predictions
-            predictWithKnn();
-        }
-
-        function predictWithKnn() {
-            if (!window.knnModel) {
-                alert("Please train the model first");
-                return;
-            }
-            
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            const predictions = [];
-            const headerRow = document.querySelector('#dynamicTable thead tr');
-            
-            for (let i = 0; i < rows.length; i++) {
-                const featureValues = [];
-                let hasEmpty = false;
-                
-                for (const featureIndex of window.knnFeatures) {
-                    const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
-                    if (cell) {
-                        const valueText = cell.innerText.trim();
-                        if (valueText === '') {
-                            hasEmpty = true;
-                            break;
-                        }
-                        const value = parseFloat(valueText);
-                        if (isNaN(value)) {
-                            hasEmpty = true;
-                            break;
-                        }
-                        featureValues.push(value);
-                    }
-                }
-                
-                if (!hasEmpty) {
-                    const scaledValues = window.knnScaler.transform([featureValues]);
-                    const prediction = window.knnModel.predict(scaledValues)[0];
-                    predictions.push({
-                        rowIndex: i,
-                        prediction: prediction
-                    });
-                }
-            }
-            
-            // Add predictions to table
-            let predictionColIndex = -1;
-            
-            // Check if prediction column exists
-            for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
-                if (headerRow.cells[i].textContent === 'Prediction') {
-                    predictionColIndex = i;
+function trainAndPredict(section) {
+    const featuresSelect = section.querySelector('.knn-features');
+    const targetSelect = section.querySelector('.knn-target');
+    const kValue = section.querySelector('.k-value').value;
+    
+    const selectedFeatures = Array.from(featuresSelect.selectedOptions).map(opt => parseInt(opt.value));
+    const selectedTarget = parseInt(targetSelect.value);
+    
+    if (selectedFeatures.length === 0) {
+        alert("Please select at least one feature");
+        return;
+    }
+    
+    // Get data from table
+    const X = [];
+    const y = [];
+    const rows = document.querySelectorAll('#dynamicTable tbody tr');
+    const headerRow = document.querySelector('#dynamicTable thead tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const featureValues = [];
+        let hasEmpty = false;
+        
+        for (const featureIndex of selectedFeatures) {
+            const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
+            if (cell) {
+                const valueText = cell.innerText.trim();
+                if (valueText === '') {
+                    hasEmpty = true;
                     break;
                 }
-            }
-            
-            // Add new column if needed
-            if (predictionColIndex === -1) {
-                predictionColIndex = headerRow.cells.length;
-                const newHeader = document.createElement("th");
-                newHeader.textContent = "Prediction";
-                newHeader.style.backgroundColor = "#4CAF50";
-                newHeader.style.color = "white";
-                headerRow.appendChild(newHeader);
-                
-                for (let i = 0; i < rows.length; i++) {
-                    const newCell = document.createElement("td");
-                    rows[i].appendChild(newCell);
-                }
-            }
-            
-            // Fill predictions
-            for (const pred of predictions) {
-                const cell = rows[pred.rowIndex].cells[predictionColIndex];
-                cell.textContent = pred.prediction;
-                cell.style.fontWeight = 'bold';
-                cell.style.color = '#4CAF50';
-            }
-            
-            document.getElementById('knn-results').innerHTML = 
-                "<strong>Predictions added to table</strong>";
-        }
-
-        function resetKnn() {
-            window.knnModel = null;
-            window.knnScaler = null;
-            window.knnFeatures = null;
-            window.knnTarget = null;
-            document.getElementById('knn-results').innerHTML = "";
-            
-            // Remove prediction column if it exists
-            const headerRow = document.querySelector('#dynamicTable thead tr');
-            for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
-                if (headerRow.cells[i].textContent === 'Prediction') {
-                    headerRow.deleteCell(i);
-                    const bodyRows = document.querySelectorAll('#dynamicTable tbody tr');
-                    bodyRows.forEach(row => row.deleteCell(i));
+                const value = parseFloat(valueText);
+                if (isNaN(value)) {
+                    hasEmpty = true;
                     break;
                 }
+                featureValues.push(value);
             }
         }
+        
+        const targetCell = rows[i].cells[selectedTarget + 1]; // +1 to account for row number column
+        if (targetCell && !hasEmpty) {
+            const targetText = targetCell.innerText.trim();
+            if (targetText !== '') {
+                y.push(targetText);
+                X.push(featureValues);
+            }
+        }
+    }
+    
+    if (X.length < 2) {
+        section.querySelector('.knn-results').innerHTML = 
+            "<strong>Error:</strong> Not enough valid data for training (need at least 2 samples)";
+        return;
+    }
+    
+    // Scale features
+    const scaler = new StandardScaler();
+    const X_scaled = scaler.fitTransform(X);
+    
+    // Train KNN
+    const knn = new KNeighborsClassifier(parseInt(kValue));
+    knn.fit(X_scaled, y);
+    
+    // Store model for predictions on the section
+    section.knnModel = knn;
+    section.knnScaler = scaler;
+    section.knnFeatures = selectedFeatures;
+    section.knnTarget = selectedTarget;
+    
+    // Make predictions
+    predictWithKnn(section);
+}
 
-        function updateKnnSelects() {
-            const featuresSelect = document.getElementById('knn-features');
-            const targetSelect = document.getElementById('knn-target');
-            const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
-            
-            featuresSelect.innerHTML = '';
-            targetSelect.innerHTML = '';
-            
-            headerCells.forEach((header, index) => {
-                if (header.textContent !== 'Prediction') {
-                    const featureOption = document.createElement('option');
-                    featureOption.value = index;
-                    featureOption.text = header.textContent || `Column ${index + 1}`;
-                    featuresSelect.appendChild(featureOption.cloneNode(true));
-                    targetSelect.appendChild(featureOption);
+function predictWithKnn(section) {
+    if (!section.knnModel) {
+        alert("Please train the model first");
+        return;
+    }
+    
+    const rows = document.querySelectorAll('#dynamicTable tbody tr');
+    const predictions = [];
+    const headerRow = document.querySelector('#dynamicTable thead tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const featureValues = [];
+        let hasEmpty = false;
+        
+        for (const featureIndex of section.knnFeatures) {
+            const cell = rows[i].cells[featureIndex + 1]; // +1 to account for row number column
+            if (cell) {
+                const valueText = cell.innerText.trim();
+                if (valueText === '') {
+                    hasEmpty = true;
+                    break;
                 }
+                const value = parseFloat(valueText);
+                if (isNaN(value)) {
+                    hasEmpty = true;
+                    break;
+                }
+                featureValues.push(value);
+            }
+        }
+        
+        if (!hasEmpty) {
+            const scaledValues = section.knnScaler.transform([featureValues]);
+            const prediction = section.knnModel.predict(scaledValues)[0];
+            predictions.push({
+                rowIndex: i,
+                prediction: prediction
             });
         }
+    }
+    
+    // Add predictions to table
+    let predictionColIndex = -1;
+    
+    // Check if prediction column exists
+    for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
+        if (headerRow.cells[i].textContent === 'Prediction') {
+            predictionColIndex = i;
+            break;
+        }
+    }
+    
+    // Add new column if needed
+    if (predictionColIndex === -1) {
+        predictionColIndex = headerRow.cells.length;
+        const newHeader = document.createElement("th");
+        newHeader.textContent = "Prediction";
+        newHeader.style.backgroundColor = "#4CAF50";
+        newHeader.style.color = "white";
+        headerRow.appendChild(newHeader);
+        
+        for (let i = 0; i < rows.length; i++) {
+            const newCell = document.createElement("td");
+            rows[i].appendChild(newCell);
+        }
+    }
+    
+    // Fill predictions
+    for (const pred of predictions) {
+        const cell = rows[pred.rowIndex].cells[predictionColIndex];
+        cell.textContent = pred.prediction;
+        cell.style.fontWeight = 'bold';
+        cell.style.color = '#4CAF50';
+    }
+    
+    section.querySelector('.knn-results').innerHTML = 
+        "<strong>Predictions added to table</strong>";
+}
 
-        // Update KNN selects when columns change
-        document.querySelector('#dynamicTable').addEventListener('DOMSubtreeModified', () => {
-            if (document.getElementById('knn-section').style.display !== 'none') {
-                updateKnnSelects();
+function resetKnn(section) {
+    section.knnModel = null;
+    section.knnScaler = null;
+    section.knnFeatures = null;
+    section.knnTarget = null;
+    section.querySelector('.knn-results').innerHTML = "";
+    
+    // Remove prediction column if it exists
+    const headerRow = document.querySelector('#dynamicTable thead tr');
+    for (let i = 1; i < headerRow.cells.length; i++) { // Start from 1 to skip row number column
+        if (headerRow.cells[i].textContent === 'Prediction') {
+            headerRow.deleteCell(i);
+            const bodyRows = document.querySelectorAll('#dynamicTable tbody tr');
+            bodyRows.forEach(row => row.deleteCell(i));
+            break;
+        }
+    }
+}
+
+function handleTableChanges() {
+    console.log('Table changed - updating KNN sections');
+    document.querySelectorAll('.knn-section').forEach(section => {
+        updateKnnSelects(section);
+    });
+}
+
+// Set up event listener for column changes
+document.getElementById('dynamicTable').addEventListener('columnsChanged', handleTableChanges);
+
+// Mutation Observer for automatic table change detection
+const tableObserver = new MutationObserver((mutations) => {
+    mutations.forEach(mutation => {
+        if (mutation.addedNodes.length || mutation.removedNodes.length) {
+            handleTableChanges();
+        }
+    });
+});
+
+// Start observing the table
+tableObserver.observe(document.getElementById('dynamicTable'), {
+    childList: true,
+    subtree: true,
+    attributeFilter: ['class']
+});
+
+// Table navigation with Enter key
+table.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const activeElement = document.activeElement;
+        
+        if (activeElement.tagName === 'TD' && activeElement.contentEditable === 'true') {
+            const currentRow = activeElement.parentNode;
+            const currentCellIndex = activeElement.cellIndex;
+            const nextCellIndex = currentCellIndex + 1; 
+            let nextCell = currentRow.cells[nextCellIndex]; 
+            
+            if (nextCell && nextCell.contentEditable === 'true') {
+                nextCell.focus();
+            } else { 
+                const nextRow = currentRow.nextElementSibling;
+                if (nextRow) {
+                    let firstEditableCellInNextRow = null;
+                    for(let i=0; i<nextRow.cells.length; i++){
+                        if(nextRow.cells[i].contentEditable === 'true'){
+                            firstEditableCellInNextRow = nextRow.cells[i];
+                            break;
+                        }
+                    }
+                    if(firstEditableCellInNextRow) {
+                        firstEditableCellInNextRow.focus();
+                    } else {
+                        activeElement.blur();
+                    }
+                } else {
+                    activeElement.blur();
+                }
             }
-        });
+        } else if (activeElement.tagName === 'TH' && activeElement.contentEditable === 'true') {
+            if (tableBody.rows.length > 0 && tableBody.rows[0].cells.length > 1 && tableBody.rows[0].cells[1].contentEditable === 'true') {
+                tableBody.rows[0].cells[1].focus();
+            } else {
+                activeElement.blur();
+            }
+        }
+    }
+});
     </script>
 
 </body>
