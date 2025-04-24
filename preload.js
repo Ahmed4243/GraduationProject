@@ -1,4 +1,3 @@
-
 const { ipcRenderer, contextBridge } = require('electron');
 
 // Expose protected methods that allow the renderer process to use
@@ -27,7 +26,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     showMessage: (message) => ipcRenderer.send('show-message', message),
     
     // For debugging
-    log: (message) => ipcRenderer.send('log', message)
+    log: (message) => ipcRenderer.send('log', message),
+    
+    // SQL Import
+    importFromSQL: () => ipcRenderer.send('import-sql'),
+    onShowSQLTables: (callback) => ipcRenderer.on('show-sql-tables', callback),
+    onSQLError: (callback) => ipcRenderer.on('sql-error', callback),
+    selectSQLTable: (tableName) => ipcRenderer.send('select-sql-table', tableName),
+    onSQLDataReady: (callback) => ipcRenderer.on('sql-data-ready', callback)
 });
 
 // Security: Replace the old global electron object with a more secure version

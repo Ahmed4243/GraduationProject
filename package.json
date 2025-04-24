@@ -10,6 +10,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.0",
+    "pg": "^8.15.5",
+    "sql": "^0.78.0",
+    "sqlite3": "^5.1.7",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "electron": "^35.2.1"
   }
 }
