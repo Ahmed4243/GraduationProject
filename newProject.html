@@ -1194,60 +1194,60 @@
         }
 
     function transposeTable() {
-    const table = document.getElementById('dynamicTable');
-    const thead = table.querySelector('thead');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.rows);
-    const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
+        const table = document.getElementById('dynamicTable');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.rows);
+        const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
 
-    // Create a 2D array including headers as the first row
-    const data = [
-        headers.map(header => header.textContent), // Headers as first row
-        ...rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent)) // Data rows
-    ];
+        // Create a 2D array including headers as the first row
+        const data = [
+            headers.map(header => header.textContent), // Headers as first row
+            ...rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent)) // Data rows
+        ];
 
-    // Transpose the data
-    const transposedData = data[0].map((_, colIndex) => data.map(row => row[colIndex] || ''));
+        // Transpose the data
+        const transposedData = data[0].map((_, colIndex) => data.map(row => row[colIndex] || ''));
 
-    // Clear the table
-    thead.innerHTML = '';
-    tbody.innerHTML = '';
+        // Clear the table
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
 
-    // Create new header row
-    const newHeaderRow = document.createElement('tr');
-    newHeaderRow.innerHTML = '<th class="row-number"></th>';
+        // Create new header row
+        const newHeaderRow = document.createElement('tr');
+        newHeaderRow.innerHTML = '<th class="row-number"></th>';
 
-    // Use the first column of transposed data as headers, or fallback to "Feature X"
-    if (transposedData.length > 0) {
-        for (let i = 0; i < transposedData[0].length; i++) {
-            const th = document.createElement('th');
-            th.contentEditable = true;
-            th.style.backgroundColor = "#0d8bf1";
-            th.style.fontWeight = "bold";
-            th.textContent = transposedData[0][i] || `Feature ${i + 1}`;
-            newHeaderRow.appendChild(th);
+        // Use the first column of transposed data as headers, or fallback to "Feature X"
+        if (transposedData.length > 0) {
+            for (let i = 0; i < transposedData[0].length; i++) {
+                const th = document.createElement('th');
+                th.contentEditable = true;
+                th.style.backgroundColor = "#0d8bf1";
+                th.style.fontWeight = "bold";
+                th.textContent = transposedData[0][i] || `Feature ${i + 1}`;
+                newHeaderRow.appendChild(th);
+            }
         }
-    }
-    thead.appendChild(newHeaderRow);
+        thead.appendChild(newHeaderRow);
 
-    // Create new data rows, starting from the second row of transposed data
-    for (let i = 1; i < transposedData.length; i++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="row-number">${i}</td>`;
-        for (let j = 0; j < transposedData[i].length; j++) {
-            const td = document.createElement('td');
-            td.contentEditable = true;
-            td.textContent = transposedData[i][j] || '';
-            tr.appendChild(td);
+        // Create new data rows, starting from the second row of transposed data
+        for (let i = 1; i < transposedData.length; i++) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td class="row-number">${i}</td>`;
+            for (let j = 0; j < transposedData[i].length; j++) {
+                const td = document.createElement('td');
+                td.contentEditable = true;
+                td.textContent = transposedData[i][j] || '';
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
         }
-        tbody.appendChild(tr);
-    }
 
-    // Update row numbers and column selects
-    updateRowNumbers();
-    updateColumnSelect();
-    updateKnnSelects();
-}
+        // Update row numbers and column selects
+        updateRowNumbers();
+        updateColumnSelect();
+        updateKnnSelects();
+    }
 
         function multiplyColumns() {
             const colIndex1 = parseInt(document.getElementById('multiplyColumn1').value);
@@ -2033,8 +2033,10 @@
                 return;
             }
 
-            const X = [];
-            const y = [];
+            const X_train = [], y_train = [];
+            const X_all = [];
+            const validRowIndices = [];
+
             const rows = document.querySelectorAll('#dynamicTable tbody tr');
 
             for (let i = 0; i < rows.length; i++) {
@@ -2043,43 +2045,50 @@
 
                 for (const featureIndex of selectedFeatures) {
                     const cell = rows[i].cells[featureIndex + 1];
-                    if (cell) {
-                        const valueText = cell.innerText.trim();
-                        if (valueText === '') {
-                            hasEmpty = true;
-                            break;
-                        }
-                        const value = parseFloat(valueText);
-                        if (isNaN(value)) {
-                            hasEmpty = true;
-                            break;
-                        }
-                        featureValues.push(value);
+                    const valueText = cell?.innerText.trim();
+                    if (!cell || valueText === '' || isNaN(parseFloat(valueText))) {
+                        hasEmpty = true;
+                        break;
                     }
+                    featureValues.push(parseFloat(valueText));
                 }
 
-                const targetCell = rows[i].cells[selectedTarget + 1];
-                const targetValue = targetCell ? targetCell.innerText.trim() : '';
+                if (!hasEmpty) {
+                    const targetCell = rows[i].cells[selectedTarget + 1];
+                    const targetValue = targetCell ? targetCell.innerText.trim() : '';
 
-                if (!hasEmpty && targetValue !== '') {
-                    X.push(featureValues);
-                    y.push(targetValue);
+                    // If target is present, use for training
+                    if (targetValue !== '') {
+                        X_train.push(featureValues);
+                        y_train.push(targetValue);
+                    }
+
+                    // Add to prediction list (we'll predict for all rows with full features)
+                    X_all.push(featureValues);
+                    validRowIndices.push(i);
                 }
             }
 
-            if (X.length < kValue || X.length === 0) {
-                section.querySelector('.knn-results').innerHTML = `<strong>Error:</strong> Not enough valid data (found ${X.length} rows, need at least ${kValue}).`;
+            if (X_train.length < kValue || X_train.length === 0) {
+                section.querySelector('.knn-results').innerHTML = `<strong>Error:</strong> Not enough valid training data (found ${X_train.length} rows, need at least ${kValue}).`;
+                return;
+            }
+
+            if (X_all.length === 0) {
+                section.querySelector('.knn-results').innerHTML = `<strong>Error:</strong> No rows found with valid features to predict.`;
                 return;
             }
 
             const scaler = new StandardScaler();
-            const X_scaled = scaler.fitTransform(X);
+            const X_train_scaled = scaler.fitTransform(X_train);
+            const X_all_scaled = scaler.transform(X_all);
 
             const knn = new KNeighborsClassifier(kValue);
-            knn.fit(X_scaled, y);
+            knn.fit(X_train_scaled, y_train);
 
-            const predictions = knn.predict(X_scaled);
+            const predictions = knn.predict(X_all_scaled);
 
+            // Add prediction column to header
             const headerRow = document.querySelector('#dynamicTable thead tr');
             const newHeader = document.createElement('th');
             newHeader.contentEditable = true;
@@ -2088,14 +2097,16 @@
             newHeader.textContent = 'KNN Prediction';
             headerRow.appendChild(newHeader);
 
+            // Add predictions to corresponding rows
             rows.forEach((row, index) => {
                 const newCell = document.createElement('td');
                 newCell.contentEditable = true;
-                newCell.textContent = index < predictions.length ? predictions[index] : '';
+                const predIndex = validRowIndices.indexOf(index);
+                newCell.textContent = predIndex !== -1 ? predictions[predIndex] : '';
                 row.appendChild(newCell);
             });
 
-            section.querySelector('.knn-results').innerHTML = `<strong>Success:</strong> Predictions added as a new column.`;
+            section.querySelector('.knn-results').innerHTML = `<strong>Success:</strong> Predictions added for all valid rows.`;
             updateColumnSelect();
             updateKnnSelects();
         }
