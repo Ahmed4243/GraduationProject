@@ -237,7 +237,7 @@
             font-size: 1em;
             width: 100%;
             padding-top: 5px;
-            line-height: 1.4;
+            line-height: dialogs1.4;
         }
 
         #stats-sections-container .stats-output strong,
@@ -318,7 +318,8 @@
             font-family: 'Open Sans';
         }
 
-        .cleaning-dialog select {
+        .cleaning-dialog select,
+        .cleaning-dialog input[type="text"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -419,6 +420,12 @@
             <div class="popup-menu">
                 <a href="#" id="transposeOption">Transpose</a>
                 <a href="#" id="multiplyColumnsOption">Multiply Columns</a>
+                <a href="#" id="squareValuesOption">Square Values</a>
+                <a href="#" id="squareRootOption">Square Root</a>
+                <a href="#" id="capitalizeTextOption">Capitalize Text</a>
+                <a href="#" id="reverseTextOption">Reverse Text</a>
+                <a href="#" id="labelEncodingOption">Label Encoding</a>
+                <a href="#" id="appendStringOption">Append String</a>
             </div>
         </div>
         <div class="block">
@@ -553,6 +560,24 @@
         <div class="cleaning-dialog-buttons">
             <button id="cancelMultiplyColumnsBtn" class="cancelButton">Cancel</button>
             <button id="confirmMultiplyColumnsBtn">Confirm</button>
+        </div>
+    </div>
+
+    <div class="dialog-backdrop" id="appendStringBackdrop"></div>
+    <div id="appendStringDialog" class="cleaning-dialog">
+        <h3 style="margin-top: 0;">Append String</h3>
+        <label for="appendColumnSelect">Column:</label>
+        <select id="appendColumnSelect"></select>
+        <label for="appendStringInput">String to Append/Prepend:</label>
+        <input type="text" id="appendStringInput">
+        <label for="appendPosition">Position:</label>
+        <select id="appendPosition">
+            <option value="append">Append</option>
+            <option value="prepend">Prepend</option>
+        </select>
+        <div class="cleaning-dialog-buttons">
+            <button id="cancelAppendStringBtn" class="cancelButton">Cancel</button>
+            <button id="confirmAppendStringBtn">Confirm</button>
         </div>
     </div>
 
@@ -783,20 +808,21 @@
             });
         }
 
-        function updateFeatureNames() {
-            const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
-            let featureCount = 1;
+function updateFeatureNames() {
+    const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+    let featureCount = 1;
 
-            headers.forEach((header) => {
-                if (/^Feature \d+$/.test(header.textContent)) {
-                    header.textContent = `Feature ${featureCount}`;
-                }
-                featureCount++;
-            });
+    headers.forEach((header) => {
+        // Only update if the header is empty or matches "Feature X"
+        if (!header.textContent.trim() || /^Feature \d+$/.test(header.textContent)) {
+            header.textContent = `Feature ${featureCount}`;
         }
+        featureCount++;
+    });
+}
 
         function updateColumnSelect() {
-            const allSelects = document.querySelectorAll('#stats-sections-container select');
+            const allSelects = document.querySelectorAll('#stats-sections-container select, #missingValuesColumn, #actionColumnSelect, #multiplyColumn1, #multiplyColumn2, #appendColumnSelect');
             const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
 
             allSelects.forEach(select => {
@@ -877,6 +903,14 @@
             document.getElementById('multiplyColumnsDialog').style.display = 'block';
             populateColumnSelect('multiplyColumn1');
             populateColumnSelect('multiplyColumn2');
+        }
+
+        function showAppendStringDialog() {
+            document.getElementById('appendStringBackdrop').style.display = 'block';
+            document.getElementById('appendStringDialog').style.display = 'block';
+            populateColumnSelect('appendColumnSelect');
+            document.getElementById('appendStringInput').value = '';
+            document.getElementById('appendPosition').selectedIndex = 0;
         }
 
         function hideAllDialogs() {
@@ -992,6 +1026,143 @@
             }
         }
 
+        function squareValues(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            const header = headerRow.cells[colIndex + 1].textContent;
+            const newHeader = document.createElement('th');
+            newHeader.contentEditable = true;
+            newHeader.style.backgroundColor = '#0d8bf1';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.textContent = `Square of ${header}`;
+            headerRow.appendChild(newHeader);
+
+            let hasInvalid = false;
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const newCell = document.createElement('td');
+                newCell.contentEditable = true;
+                const value = parseFloat(cell.textContent.trim());
+                if (!isNaN(value)) {
+                    newCell.textContent = (value * value).toString();
+                } else {
+                    newCell.textContent = 'INVALID';
+                    hasInvalid = true;
+                }
+                row.appendChild(newCell);
+            });
+
+            if (hasInvalid) {
+                alert('Some values couldn\'t be squared. Invalid entries are marked with "INVALID".');
+            }
+            updateColumnSelect();
+            updateKnnSelects();
+        }
+
+        function squareRoot(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            const header = headerRow.cells[colIndex + 1].textContent;
+            const newHeader = document.createElement('th');
+            newHeader.contentEditable = true;
+            newHeader.style.backgroundColor = '#0d8bf1';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.textContent = `Sqrt of ${header}`;
+            headerRow.appendChild(newHeader);
+
+            let hasInvalid = false;
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const newCell = document.createElement('td');
+                newCell.contentEditable = true;
+                const value = parseFloat(cell.textContent.trim());
+                if (!isNaN(value) && value >= 0) {
+                    newCell.textContent = Math.sqrt(value).toString();
+                } else {
+                    newCell.textContent = 'INVALID';
+                    hasInvalid = true;
+                }
+                row.appendChild(newCell);
+            });
+
+            if (hasInvalid) {
+                alert('Some values couldn\'t be processed (negatives or non-numeric). Invalid entries are marked with "INVALID".');
+            }
+            updateColumnSelect();
+            updateKnnSelects();
+        }
+
+        function capitalizeText(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const text = cell.textContent.trim();
+                if (text) {
+                    cell.textContent = text
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ');
+                }
+            });
+        }
+
+        function reverseText(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const text = cell.textContent.trim();
+                if (text) {
+                    cell.textContent = text.split('').reverse().join('');
+                }
+            });
+        }
+
+        function labelEncoding(colIndex) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            const header = headerRow.cells[colIndex + 1].textContent;
+            const newHeader = document.createElement('th');
+            newHeader.contentEditable = true;
+            newHeader.style.backgroundColor = '#0d8bf1';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.textContent = `Encoded ${header}`;
+            headerRow.appendChild(newHeader);
+
+            const uniqueValues = new Set();
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                uniqueValues.add(cell.textContent.trim());
+            });
+
+            const labelMap = {};
+            Array.from(uniqueValues).forEach((value, index) => {
+                labelMap[value] = index;
+            });
+
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const newCell = document.createElement('td');
+                newCell.contentEditable = true;
+                const value = cell.textContent.trim();
+                newCell.textContent = labelMap[value].toString();
+                row.appendChild(newCell);
+            });
+
+            updateColumnSelect();
+            updateKnnSelects();
+        }
+
+        function appendString(colIndex, appendText, position) {
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.cells[colIndex + 1];
+                const text = cell.textContent.trim();
+                if (text || appendText) {
+                    cell.textContent = position === 'append' ? text + appendText : appendText + text;
+                }
+            });
+        }
+
         function showRemovalFeedback(removedCount) {
             if (removedCount > 0) {
                 alert(`${removedCount} duplicate rows were removed.`);
@@ -1024,60 +1195,61 @@
         }
 
         function transposeTable() {
-            const table = document.getElementById('dynamicTable');
-            const thead = table.querySelector('thead');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.rows);
-            const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
+    const table = document.getElementById('dynamicTable');
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.rows);
+    const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
 
-            // Create a 2D array of the table data
-            const data = rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent));
+    // Create a 2D array of the table data
+    const data = rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent));
 
-            // Transpose the data
-            const transposedData = headers.map((_, colIndex) => [
-                headers[colIndex].textContent,
-                ...data.map(row => row[colIndex])
-            ]);
+    // Transpose the data, including headers as the first column
+    const transposedData = headers.map((header, colIndex) => [
+        header.textContent, // Original header becomes first column
+        ...data.map(row => row[colIndex])
+    ]);
 
-            // Clear the table
-            thead.innerHTML = '';
-            tbody.innerHTML = '';
+    // Clear the table
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
 
-            // Create new header row
-            const newHeaderRow = document.createElement('tr');
-            newHeaderRow.innerHTML = '<th class="row-number"></th>';
-            transposedData[0].forEach((header, index) => {
-                if (index > 0) { // Skip the first element as it's now a row header
-                    const th = document.createElement('th');
-                    th.contentEditable = true;
-                    th.style.backgroundColor = "#0d8bf1";
-                    th.style.fontWeight = "bold";
-                    th.textContent = `Feature ${index}`;
-                    newHeaderRow.appendChild(th);
-                }
-            });
-            thead.appendChild(newHeaderRow);
-
-            // Create new data rows
-            for (let i = 1; i < transposedData.length; i++) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="row-number">${i}</td>`;
-                transposedData[i].forEach((cellValue, index) => {
-                    if (index > 0) { // Skip the first element as it's now a row header
-                        const td = document.createElement('td');
-                        td.contentEditable = true;
-                        td.textContent = cellValue;
-                        tr.appendChild(td);
-                    }
-                });
-                tbody.appendChild(tr);
-            }
-
-            // Update row numbers
-            updateRowNumbers();
-            updateColumnSelect();
-            updateKnnSelects();
+    // Create new header row
+    const newHeaderRow = document.createElement('tr');
+    newHeaderRow.innerHTML = '<th class="row-number"></th>';
+    
+    // Use the first row of transposed data (excluding the first element) as headers
+    if (transposedData.length > 0 && transposedData[0].length > 1) {
+        for (let i = 1; i < transposedData[0].length; i++) {
+            const th = document.createElement('th');
+            th.contentEditable = true;
+            th.style.backgroundColor = "#0d8bf1";
+            th.style.fontWeight = "bold";
+            // Use the first row's data as headers, or fallback to "Feature X"
+            th.textContent = transposedData[0][i] || `Feature ${i}`;
+            newHeaderRow.appendChild(th);
         }
+    }
+    thead.appendChild(newHeaderRow);
+
+    // Create new data rows, starting from the second element of each transposed column
+    for (let i = 1; i < transposedData.length; i++) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="row-number">${i}</td>`;
+        for (let j = 1; j < transposedData[i].length; j++) {
+            const td = document.createElement('td');
+            td.contentEditable = true;
+            td.textContent = transposedData[i][j] || '';
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+
+    // Update row numbers and column selects
+    updateRowNumbers();
+    updateColumnSelect();
+    updateKnnSelects();
+}
 
         function multiplyColumns() {
             const colIndex1 = parseInt(document.getElementById('multiplyColumn1').value);
@@ -1159,11 +1331,80 @@
                 showMultiplyColumnsDialog();
             });
 
+            document.getElementById('squareValuesOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'square';
+                showColumnActionDialog('Square Values');
+            });
+
+            document.getElementById('squareRootOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'sqrt';
+                showColumnActionDialog('Square Root');
+            });
+
+            document.getElementById('capitalizeTextOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'capitalize';
+                showColumnActionDialog('Capitalize Text');
+            });
+
+            document.getElementById('reverseTextOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'reverse';
+                showColumnActionDialog('Reverse Text');
+            });
+
+            document.getElementById('labelEncodingOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'labelEncode';
+                showColumnActionDialog('Label Encoding');
+            });
+
+            document.getElementById('appendStringOption').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCleaningAction = 'appendString';
+                showAppendStringDialog();
+            });
+
             document.getElementById('confirmMultiplyColumnsBtn').addEventListener('click', multiplyColumns);
             document.getElementById('cancelMultiplyColumnsBtn').addEventListener('click', hideAllDialogs);
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('confirmAppendStringBtn').addEventListener('click', () => {
+                const colIndex = parseInt(document.getElementById('appendColumnSelect').value);
+                const appendText = document.getElementById('appendStringInput').value;
+                const position = document.getElementById('appendPosition').value;
+                appendString(colIndex, appendText, position);
+                hideAllDialogs();
+            });
+
+            document.getElementById('cancelAppendStringBtn').addEventListener('click', hideAllDialogs);
+
+            document.getElementById('confirmColumnActionBtn').addEventListener('click', () => {
+                const colIndex = parseInt(document.getElementById('actionColumnSelect').value);
+                if (currentCleaningAction === 'standardize') {
+                    standardizeText(colIndex);
+                } else if (currentCleaningAction === 'convert') {
+                    convertToNumeric(colIndex);
+                } else if (currentCleaningAction === 'square') {
+                    squareValues(colIndex);
+                } else if (currentCleaningAction === 'sqrt') {
+                    squareRoot(colIndex);
+                } else if (currentCleaningAction === 'capitalize') {
+                    capitalizeText(colIndex);
+                } else if (currentCleaningAction === 'reverse') {
+                    reverseText(colIndex);
+                } else if (currentCleaningAction === 'labelEncode') {
+                    labelEncoding(colIndex);
+                }
+                hideAllDialogs();
+            });
+            document.getElementById('cancelColumnActionBtn').addEventListener('click', hideAllDialogs);
+
+            document.querySelectorAll('.dialog-backdrop').forEach(backdrop => {
+                backdrop.addEventListener('click', hideAllDialogs);
+            });
+
             const showDataFrameLink = document.getElementById('showDataFrameLink');
             const importSection = document.getElementById('importSection');
             const dataframeSection = document.getElementById('dataframeSection');
@@ -1188,38 +1429,7 @@
                 showMissingValuesDialog();
             });
 
-            document.getElementById('standardizeText').addEventListener('click', (e) => {
-                e.preventDefault();
-                currentCleaningAction = 'standardize';
-                showColumnActionDialog('Standardize Text');
-            });
-
-            document.getElementById('convertToNumeric').addEventListener('click', (e) => {
-                e.preventDefault();
-                currentCleaningAction = 'convert';
-                showColumnActionDialog('Convert to Numeric');
-            });
-
             document.getElementById('confirmMissingValuesBtn').addEventListener('click', handleMissingValues);
-            document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
-
-            document.getElementById('confirmColumnActionBtn').addEventListener('click', () => {
-                const colIndex = parseInt(document.getElementById('actionColumnSelect').value);
-                if (currentCleaningAction === 'standardize') {
-                    standardizeText(colIndex);
-                } else if (currentCleaningAction === 'convert') {
-                    convertToNumeric(colIndex);
-                }
-                hideAllDialogs();
-            });
-            document.getElementById('cancelColumnActionBtn').addEventListener('click', hideAllDialogs);
-
-            document.querySelectorAll('.dialog-backdrop').forEach(backdrop => {
-                backdrop.addEventListener('click', hideAllDialogs);
-            });
-
-            let columnToRemoveIndex = -1;
-            let rowToRemoveIndex = -1;
 
             if (showDataFrameLink) {
                 showDataFrameLink.addEventListener('click', (e) => {
@@ -1337,6 +1547,9 @@
                     columnContextMenu.style.display = 'none';
                 }
             });
+
+            let columnToRemoveIndex = -1;
+            let rowToRemoveIndex = -1;
 
             removeColumnOption.addEventListener('click', () => {
                 if (columnToRemoveIndex > 0 && tableHead.rows[0]?.cells.length > 2) {
@@ -1848,18 +2061,16 @@
                 }
 
                 const targetCell = rows[i].cells[selectedTarget + 1];
-                if (targetCell && !hasEmpty) {
-                    const targetText = targetCell.innerText.trim();
-                    if (targetText !== '') {
-                        y.push(targetText);
-                        X.push(featureValues);
-                    }
+                const targetValue = targetCell ? targetCell.innerText.trim() : '';
+
+                if (!hasEmpty && targetValue !== '') {
+                    X.push(featureValues);
+                    y.push(targetValue);
                 }
             }
 
-            if (X.length < 2) {
-                section.querySelector('.knn-results').innerHTML =
-                    "<strong>Error:</strong> Not enough valid data for training (need at least 2 samples)";
+            if (X.length < kValue || X.length === 0) {
+                section.querySelector('.knn-results').innerHTML = `<strong>Error:</strong> Not enough valid data (found ${X.length} rows, need at least ${kValue}).`;
                 return;
             }
 
@@ -1869,103 +2080,53 @@
             const knn = new KNeighborsClassifier(kValue);
             knn.fit(X_scaled, y);
 
-            section.model = knn;
-            section.scaler = scaler;
-            section.features = selectedFeatures;
-            section.target = selectedTarget;
+            const predictions = knn.predict(X_scaled);
 
-            predictWithKnn(section);
-        }
-
-        function predictWithKnn(section) {
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            const predictions = [];
             const headerRow = document.querySelector('#dynamicTable thead tr');
-
-            for (let i = 0; i < rows.length; i++) {
-                const featureValues = [];
-                let hasEmpty = false;
-
-                for (const featureIndex of section.features) {
-                    const cell = rows[i].cells[featureIndex + 1];
-                    if (cell) {
-                        const valueText = cell.innerText.trim();
-                        if (valueText === '') {
-                            hasEmpty = true;
-                            break;
-                        }
-                        const value = parseFloat(valueText);
-                        if (isNaN(value)) {
-                            hasEmpty = true;
-                            break;
-                        }
-                        featureValues.push(value);
-                    }
-                }
-
-                if (!hasEmpty) {
-                    const scaledValues = section.scaler.transform([featureValues]);
-                    const prediction = section.model.predict(scaledValues)[0];
-                    predictions.push({
-                        rowIndex: i,
-                        prediction: prediction
-                    });
-                }
-            }
-
-            // Find a unique column name
-            let colName = 'KNN Prediction';
-            let counter = 1;
-            while (Array.from(headerRow.cells).some(cell => cell.textContent === colName)) {
-                colName = `KNN Prediction ${counter}`;
-                counter++;
-            }
-
-            // Add new column
-            const newHeader = document.createElement("th");
-            newHeader.textContent = colName;
-            newHeader.style.backgroundColor = "#4CAF50";
-            newHeader.style.color = "white";
+            const newHeader = document.createElement('th');
+            newHeader.contentEditable = true;
+            newHeader.style.backgroundColor = '#0d8bf1';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.textContent = 'KNN Prediction';
             headerRow.appendChild(newHeader);
 
-            for (let i = 0; i < rows.length; i++) {
-                const newCell = document.createElement("td");
-                rows[i].appendChild(newCell);
-            }
+            rows.forEach((row, index) => {
+                const newCell = document.createElement('td');
+                newCell.contentEditable = true;
+                newCell.textContent = index < predictions.length ? predictions[index] : '';
+                row.appendChild(newCell);
+            });
 
-            // Fill predictions
-            const predictionColIndex = headerRow.cells.length - 1;
-            for (const pred of predictions) {
-                const cell = rows[pred.rowIndex].cells[predictionColIndex];
-                cell.textContent = pred.prediction;
-                cell.style.fontWeight = 'bold';
-                cell.style.color = '#4CAF50';
-            }
-
-            section.querySelector('.knn-results').innerHTML = `<strong>Predictions added to table as "${colName}"</strong>`;
-
-            // Store the column index in the section for later removal
-            section.predictionColIndex = predictionColIndex;
+            section.querySelector('.knn-results').innerHTML = `<strong>Success:</strong> Predictions added as a new column.`;
+            updateColumnSelect();
+            updateKnnSelects();
         }
 
         function resetKnn(section) {
-            if (section.predictionColIndex !== undefined) {
-                const headerRow = document.querySelector('#dynamicTable thead tr');
-                headerRow.deleteCell(section.predictionColIndex);
-                const bodyRows = document.querySelectorAll('#dynamicTable tbody tr');
-                bodyRows.forEach(row => row.deleteCell(section.predictionColIndex));
-            }
-            section.model = null;
-            section.scaler = null;
-            section.features = null;
-            section.target = null;
-            section.predictionColIndex = undefined;
-            section.querySelector('.knn-results').innerHTML = "";
+            const featuresSelect = section.querySelector('.knn-features');
+            const targetSelect = section.querySelector('.knn-target');
+            const kInput = section.querySelector('.k-value');
+            const resultsDiv = section.querySelector('.knn-results');
+
+            featuresSelect.selectedIndex = -1;
+            targetSelect.selectedIndex = 0;
+            kInput.value = '5';
+            resultsDiv.innerHTML = '';
         }
 
-        document.querySelector('#dynamicTable').addEventListener('DOMSubtreeModified', () => {
-            updateKnnSelects();
+        document.getElementById('standardizeText').addEventListener('click', (e) => {
+            e.preventDefault();
+            currentCleaningAction = 'standardize';
+            showColumnActionDialog('Standardize Text');
         });
+
+        document.getElementById('convertToNumeric').addEventListener('click', (e) => {
+            e.preventDefault();
+            currentCleaningAction = 'convert';
+            showColumnActionDialog('Convert to Numeric');
+        });
+
+        document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
     </script>
 </body>
 </html>
