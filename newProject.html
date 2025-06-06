@@ -808,18 +808,17 @@
             });
         }
 
-function updateFeatureNames() {
-    const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
-    let featureCount = 1;
+        function updateFeatureNames() {
+            const headers = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+            let featureCount = 1;
 
-    headers.forEach((header) => {
-        // Only update if the header is empty or matches "Feature X"
-        if (!header.textContent.trim() || /^Feature \d+$/.test(header.textContent)) {
-            header.textContent = `Feature ${featureCount}`;
+            headers.forEach((header) => {
+                if (!header.textContent.trim() || /^Feature \d+$/.test(header.textContent)) {
+                    header.textContent = `Feature ${featureCount}`;
+                }
+                featureCount++;
+            });
         }
-        featureCount++;
-    });
-}
 
         function updateColumnSelect() {
             const allSelects = document.querySelectorAll('#stats-sections-container select, #missingValuesColumn, #actionColumnSelect, #multiplyColumn1, #multiplyColumn2, #appendColumnSelect');
@@ -1194,21 +1193,21 @@ function updateFeatureNames() {
             return removedCount;
         }
 
-        function transposeTable() {
+    function transposeTable() {
     const table = document.getElementById('dynamicTable');
     const thead = table.querySelector('thead');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.rows);
     const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
 
-    // Create a 2D array of the table data
-    const data = rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent));
+    // Create a 2D array including headers as the first row
+    const data = [
+        headers.map(header => header.textContent), // Headers as first row
+        ...rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent)) // Data rows
+    ];
 
-    // Transpose the data, including headers as the first column
-    const transposedData = headers.map((header, colIndex) => [
-        header.textContent, // Original header becomes first column
-        ...data.map(row => row[colIndex])
-    ]);
+    // Transpose the data
+    const transposedData = data[0].map((_, colIndex) => data.map(row => row[colIndex] || ''));
 
     // Clear the table
     thead.innerHTML = '';
@@ -1217,26 +1216,25 @@ function updateFeatureNames() {
     // Create new header row
     const newHeaderRow = document.createElement('tr');
     newHeaderRow.innerHTML = '<th class="row-number"></th>';
-    
-    // Use the first row of transposed data (excluding the first element) as headers
-    if (transposedData.length > 0 && transposedData[0].length > 1) {
-        for (let i = 1; i < transposedData[0].length; i++) {
+
+    // Use the first column of transposed data as headers, or fallback to "Feature X"
+    if (transposedData.length > 0) {
+        for (let i = 0; i < transposedData[0].length; i++) {
             const th = document.createElement('th');
             th.contentEditable = true;
             th.style.backgroundColor = "#0d8bf1";
             th.style.fontWeight = "bold";
-            // Use the first row's data as headers, or fallback to "Feature X"
-            th.textContent = transposedData[0][i] || `Feature ${i}`;
+            th.textContent = transposedData[0][i] || `Feature ${i + 1}`;
             newHeaderRow.appendChild(th);
         }
     }
     thead.appendChild(newHeaderRow);
 
-    // Create new data rows, starting from the second element of each transposed column
+    // Create new data rows, starting from the second row of transposed data
     for (let i = 1; i < transposedData.length; i++) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td class="row-number">${i}</td>`;
-        for (let j = 1; j < transposedData[i].length; j++) {
+        for (let j = 0; j < transposedData[i].length; j++) {
             const td = document.createElement('td');
             td.contentEditable = true;
             td.textContent = transposedData[i][j] || '';
