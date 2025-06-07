@@ -237,7 +237,7 @@
             font-size: 1em;
             width: 100%;
             padding-top: 5px;
-            line-height: dialogs1.4;
+            line-height: 1.4;
         }
 
         #stats-sections-container .stats-output strong,
@@ -286,7 +286,7 @@
 
         .sidebar {
             height: 100%;
-            width: 200px;
+            width: 300px;
             background-color: #117c9f;
             box-shadow: 0 4px 25px 5px rgba(0, 0, 0, 0.5);
             position: fixed;
@@ -386,10 +386,53 @@
             margin-top: 15px;
             font-family: 'Open Sans';
         }
+
+        /* Linear Regression Styles */
+        .lr-section {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: auto;
+            max-width: 90%;
+        }
+
+        .lr-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .lr-select-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lr-advanced-options {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .lr-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .lr-results {
+            margin-top: 15px;
+            font-family: 'Open Sans';
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar" style="width: 300px;">
+    <div class="sidebar">
         <div class="block">
             <a href="index.html" style="text-align: center;">
                 <img src="images/home.svg" width="20%" height="20%">
@@ -406,6 +449,7 @@
             <h1>Modeling</h1>
             <div class="popup-menu">
                 <a href="#" id="knnOption">KNN Prediction</a>
+                <a href="#" id="linearRegressionOption">Linear Regression</a>
             </div>
         </div>
         <div class="block">
@@ -516,7 +560,7 @@
     <div id="missingValuesDialog" class="cleaning-dialog">
         <h3 style="margin-top: 0;">Handle Missing Values</h3>
         <label for="missingValuesColumn">Column:</label>
-        <select id="missingValuesColumn"></select>
+        <select id="missingValuesColumn" class="column-select"></select>
         <div id="imputationMethods">
             <label for="handlingMethod">Method:</label>
             <select id="handlingMethod">
@@ -543,7 +587,7 @@
     <div id="columnActionDialog" class="cleaning-dialog">
         <h3 id="columnActionTitle" style="margin-top: 0;"></h3>
         <label for="actionColumnSelect">Column:</label>
-        <select id="actionColumnSelect"></select>
+        <select id="actionColumnSelect" class="column-select"></select>
         <div class="cleaning-dialog-buttons">
             <button id="cancelColumnActionBtn" class="cancelButton">Cancel</button>
             <button id="confirmColumnActionBtn">Confirm</button>
@@ -554,9 +598,9 @@
     <div id="multiplyColumnsDialog" class="cleaning-dialog">
         <h3 style="margin-top: 0;">Multiply Columns</h3>
         <label for="multiplyColumn1">Select Column 1:</label>
-        <select id="multiplyColumn1"></select>
+        <select id="multiplyColumn1" class="column-select"></select>
         <label for="multiplyColumn2">Select Column 2:</label>
-        <select id="multiplyColumn2"></select>
+        <select id="multiplyColumn2" class="column-select"></select>
         <div class="cleaning-dialog-buttons">
             <button id="cancelMultiplyColumnsBtn" class="cancelButton">Cancel</button>
             <button id="confirmMultiplyColumnsBtn">Confirm</button>
@@ -567,7 +611,7 @@
     <div id="appendStringDialog" class="cleaning-dialog">
         <h3 style="margin-top: 0;">Append String</h3>
         <label for="appendColumnSelect">Column:</label>
-        <select id="appendColumnSelect"></select>
+        <select id="appendColumnSelect" class="column-select"></select>
         <label for="appendStringInput">String to Append/Prepend:</label>
         <input type="text" id="appendStringInput">
         <label for="appendPosition">Position:</label>
@@ -668,7 +712,6 @@
             input.click();
         });
 
-        // SQL Import Functionality
         document.getElementById('sqlImportButton').addEventListener('click', function(e) {
             e.preventDefault();
             const input = document.createElement('input');
@@ -683,13 +726,11 @@
                     const arrayBuffer = await file.arrayBuffer();
                     const uInt8Array = new Uint8Array(arrayBuffer);
 
-                    // Initialize sql.js
                     const SQL = await initSqlJs({
                         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
                     });
                     const db = new SQL.Database(uInt8Array);
 
-                    // Get all table names
                     const tableQuery = db.exec("SELECT name FROM sqlite_master WHERE type='table';");
                     const tables = tableQuery[0]?.values?.map(row => row[0]) || [];
 
@@ -699,7 +740,6 @@
                         return;
                     }
 
-                    // For simplicity, use the first table found
                     const tableName = tables[0];
                     const result = db.exec(`SELECT * FROM ${tableName}`);
 
@@ -712,14 +752,12 @@
                     const columns = result[0].columns;
                     const values = result[0].values;
 
-                    // Populate the dynamicTable
                     const table = document.getElementById('dynamicTable');
                     const thead = table.querySelector('thead');
                     const tbody = table.querySelector('tbody');
                     thead.innerHTML = '';
                     tbody.innerHTML = '';
 
-                    // Create header row
                     const headerRow = document.createElement('tr');
                     headerRow.innerHTML = '<th class="row-number"></th>';
                     columns.forEach((header, index) => {
@@ -732,7 +770,6 @@
                     });
                     thead.appendChild(headerRow);
 
-                    // Create data rows
                     values.forEach((row, rowIndex) => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `<td class="row-number">${rowIndex + 1}</td>`;
@@ -745,14 +782,13 @@
                         tbody.appendChild(tr);
                     });
 
-                    // Hide import section and show dataframe section
                     document.getElementById('importSection').style.display = 'none';
                     document.getElementById('dataframeSection').style.display = 'flex';
                     updateRowNumbers();
                     updateColumnSelect();
                     updateKnnSelects();
+                    updateLrSelects();
 
-                    // Clean up
                     db.close();
 
                 } catch (error) {
@@ -821,7 +857,7 @@
         }
 
         function updateColumnSelect() {
-            const allSelects = document.querySelectorAll('#stats-sections-container select, #missingValuesColumn, #actionColumnSelect, #multiplyColumn1, #multiplyColumn2, #appendColumnSelect');
+            const allSelects = document.querySelectorAll('.column-select');
             const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
 
             allSelects.forEach(select => {
@@ -840,10 +876,9 @@
                 if (currentSelectedIndex !== -1 && currentSelectedIndex < select.options.length) {
                     select.selectedIndex = currentSelectedIndex;
                 } else if (select.options.length > 0) {
-                    const isSecondCorrelationSelect = select.parentElement &&
-                        select.parentElement.querySelector('label:first-of-type') &&
-                        select.parentElement.querySelector('label:first-of-type').textContent.includes('Column 1') &&
-                        select.previousElementSibling && select.previousElementSibling.tagName === 'LABEL' && select.previousElementSibling.textContent.includes('Column 2');
+                    const isSecondCorrelationSelect = select.classList.contains('correlation-column-select') &&
+                        select.parentElement.querySelector('label:first-of-type')?.textContent.includes('Column 1') &&
+                        select.previousElementSibling?.textContent.includes('Column 2');
 
                     if (isSecondCorrelationSelect && select.options.length > 1) {
                         select.selectedIndex = 1;
@@ -1056,6 +1091,7 @@
             }
             updateColumnSelect();
             updateKnnSelects();
+            updateLrSelects();
         }
 
         function squareRoot(colIndex) {
@@ -1089,6 +1125,7 @@
             }
             updateColumnSelect();
             updateKnnSelects();
+            updateLrSelects();
         }
 
         function capitalizeText(colIndex) {
@@ -1149,6 +1186,7 @@
 
             updateColumnSelect();
             updateKnnSelects();
+            updateLrSelects();
         }
 
         function appendString(colIndex, appendText, position) {
@@ -1193,61 +1231,55 @@
             return removedCount;
         }
 
-    function transposeTable() {
-        const table = document.getElementById('dynamicTable');
-        const thead = table.querySelector('thead');
-        const tbody = table.querySelector('tbody');
-        const rows = Array.from(tbody.rows);
-        const headers = Array.from(thead.rows[0].cells).slice(1); // Exclude row-number column
+        function transposeTable() {
+            const table = document.getElementById('dynamicTable');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.rows);
+            const headers = Array.from(thead.rows[0].cells).slice(1);
 
-        // Create a 2D array including headers as the first row
-        const data = [
-            headers.map(header => header.textContent), // Headers as first row
-            ...rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent)) // Data rows
-        ];
+            const data = [
+                headers.map(header => header.textContent),
+                ...rows.map(row => Array.from(row.cells).slice(1).map(cell => cell.textContent))
+            ];
 
-        // Transpose the data
-        const transposedData = data[0].map((_, colIndex) => data.map(row => row[colIndex] || ''));
+            const transposedData = data[0].map((_, colIndex) => data.map(row => row[colIndex] || ''));
 
-        // Clear the table
-        thead.innerHTML = '';
-        tbody.innerHTML = '';
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
 
-        // Create new header row
-        const newHeaderRow = document.createElement('tr');
-        newHeaderRow.innerHTML = '<th class="row-number"></th>';
+            const newHeaderRow = document.createElement('tr');
+            newHeaderRow.innerHTML = '<th class="row-number"></th>';
 
-        // Use the first column of transposed data as headers, or fallback to "Feature X"
-        if (transposedData.length > 0) {
-            for (let i = 0; i < transposedData[0].length; i++) {
-                const th = document.createElement('th');
-                th.contentEditable = true;
-                th.style.backgroundColor = "#0d8bf1";
-                th.style.fontWeight = "bold";
-                th.textContent = transposedData[0][i] || `Feature ${i + 1}`;
-                newHeaderRow.appendChild(th);
+            if (transposedData.length > 0) {
+                for (let i = 0; i < transposedData[0].length; i++) {
+                    const th = document.createElement('th');
+                    th.contentEditable = true;
+                    th.style.backgroundColor = "#0d8bf1";
+                    th.style.fontWeight = "bold";
+                    th.textContent = transposedData[0][i] || `Feature ${i + 1}`;
+                    newHeaderRow.appendChild(th);
+                }
             }
-        }
-        thead.appendChild(newHeaderRow);
+            thead.appendChild(newHeaderRow);
 
-        // Create new data rows, starting from the second row of transposed data
-        for (let i = 1; i < transposedData.length; i++) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td class="row-number">${i}</td>`;
-            for (let j = 0; j < transposedData[i].length; j++) {
-                const td = document.createElement('td');
-                td.contentEditable = true;
-                td.textContent = transposedData[i][j] || '';
-                tr.appendChild(td);
+            for (let i = 1; i < transposedData.length; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="row-number">${i}</td>`;
+                for (let j = 0; j < transposedData[i].length; j++) {
+                    const td = document.createElement('td');
+                    td.contentEditable = true;
+                    td.textContent = transposedData[i][j] || '';
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
             }
-            tbody.appendChild(tr);
-        }
 
-        // Update row numbers and column selects
-        updateRowNumbers();
-        updateColumnSelect();
-        updateKnnSelects();
-    }
+            updateRowNumbers();
+            updateColumnSelect();
+            updateKnnSelects();
+            updateLrSelects();
+        }
 
         function multiplyColumns() {
             const colIndex1 = parseInt(document.getElementById('multiplyColumn1').value);
@@ -1271,7 +1303,6 @@
                 }
             }
 
-            // Add new column
             const headerRow = document.querySelector('#dynamicTable thead tr');
             const newHeader = document.createElement('th');
             newHeader.contentEditable = true;
@@ -1290,6 +1321,7 @@
             hideAllDialogs();
             updateColumnSelect();
             updateKnnSelects();
+            updateLrSelects();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1415,6 +1447,7 @@
             const descriptiveStatsOption = document.getElementById('descriptiveStatsOption');
             const correlationAnalysisOption = document.getElementById('correlationAnalysisOption');
             const knnOption = document.getElementById('knnOption');
+            const linearRegressionOption = document.getElementById('linearRegressionOption');
             const statsSectionsContainer = document.getElementById('stats-sections-container');
             const columnContextMenu = document.getElementById('column-context-menu');
             const removeColumnOption = document.getElementById('remove-column-option');
@@ -1485,6 +1518,7 @@
                 }
                 updateColumnSelect();
                 updateKnnSelects();
+                updateLrSelects();
             });
 
             tableHead.addEventListener('input', (e) => {
@@ -1558,6 +1592,7 @@
                     updateColumnSelect();
                     updateFeatureNames();
                     updateKnnSelects();
+                    updateLrSelects();
                 }
                 columnContextMenu.style.display = 'none';
                 columnToRemoveIndex = -1;
@@ -1572,13 +1607,13 @@
                 label1.style.fontFamily = 'Open Sans';
                 label1.textContent = 'Column 1:';
                 const select1 = document.createElement('select');
-                select1.className = 'correlation-column-select';
+                select1.className = 'column-select correlation-column-select';
 
                 const label2 = document.createElement('label');
                 label2.style.fontFamily = 'Open Sans';
                 label2.textContent = 'Column 2:';
                 const select2 = document.createElement('select');
-                select2.className = 'correlation-column-select';
+                select2.className = 'column-select correlation-column-select';
 
                 const calculateButton = document.createElement('button');
                 calculateButton.textContent = 'Calculate Correlation';
@@ -1624,7 +1659,7 @@
                 statsSectionsContainer.appendChild(correlationSection);
 
                 removeButton.addEventListener('click', () => {
-                    statsSectionsContainer.removeChild(correlationSection);
+                    correlationSection.remove();
                 });
 
                 calculateButton.addEventListener('click', () => {
@@ -1694,6 +1729,7 @@
                 label.textContent = 'Select a column:';
 
                 const select = document.createElement('select');
+                select.className = 'column-select';
                 select.style.marginRight = '10px';
 
                 const calculateButton = document.createElement('button');
@@ -1711,7 +1747,7 @@
                 removeButton.className = 'remove-button';
 
                 removeButton.addEventListener('click', () => {
-                    statsSectionsContainer.removeChild(statsSection);
+                    statsSection.remove();
                 });
 
                 const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
@@ -1799,6 +1835,12 @@
                 e.preventDefault();
                 const knnSection = createKnnSection();
                 statsSectionsContainer.appendChild(knnSection);
+            });
+
+            linearRegressionOption.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lrSection = createLinearRegressionSection();
+                statsSectionsContainer.appendChild(lrSection);
             });
 
             table.addEventListener('keydown', function(event) {
@@ -1978,8 +2020,7 @@
             removeButton.textContent = 'Remove';
             removeButton.className = 'remove-button';
             removeButton.addEventListener('click', () => {
-                const statsSectionsContainer = document.getElementById('stats-sections-container');
-                statsSectionsContainer.removeChild(section);
+                section.remove();
             });
             section.appendChild(removeButton);
 
@@ -2057,13 +2098,11 @@
                     const targetCell = rows[i].cells[selectedTarget + 1];
                     const targetValue = targetCell ? targetCell.innerText.trim() : '';
 
-                    // If target is present, use for training
                     if (targetValue !== '') {
                         X_train.push(featureValues);
                         y_train.push(targetValue);
                     }
 
-                    // Add to prediction list (we'll predict for all rows with full features)
                     X_all.push(featureValues);
                     validRowIndices.push(i);
                 }
@@ -2088,7 +2127,6 @@
 
             const predictions = knn.predict(X_all_scaled);
 
-            // Add prediction column to header
             const headerRow = document.querySelector('#dynamicTable thead tr');
             const newHeader = document.createElement('th');
             newHeader.contentEditable = true;
@@ -2097,7 +2135,6 @@
             newHeader.textContent = 'KNN Prediction';
             headerRow.appendChild(newHeader);
 
-            // Add predictions to corresponding rows
             rows.forEach((row, index) => {
                 const newCell = document.createElement('td');
                 newCell.contentEditable = true;
@@ -2109,6 +2146,7 @@
             section.querySelector('.knn-results').innerHTML = `<strong>Success:</strong> Predictions added for all valid rows.`;
             updateColumnSelect();
             updateKnnSelects();
+            updateLrSelects();
         }
 
         function resetKnn(section) {
@@ -2120,6 +2158,441 @@
             featuresSelect.selectedIndex = -1;
             targetSelect.selectedIndex = 0;
             kInput.value = '5';
+            resultsDiv.innerHTML = '';
+        }
+
+        // Linear Regression Implementation
+        function trainLinearRegression(X, y, options = {}) {
+            const learningRate = 0.01;
+            const iterations = 1000;
+            const regularization = options.regularization || 'none';
+            const alpha = options.alpha || 0;
+            let degree = options.degree || 1;
+
+            const scaler = new StandardScaler();
+            let X_transformed = scaler.fitTransform(X);
+
+            if (degree > 1) {
+                if (degree > 2) degree = 2;
+                const newX = [];
+                for (let i = 0; i < X_transformed.length; i++) {
+                    const row = X_transformed[i];
+                    const newRow = [...row];
+                    for (let j = 0; j < row.length; j++) {
+                        for (let k = j; k < row.length; k++) {
+                            newRow.push(row[j] * row[k]);
+                        }
+                    }
+                    newX.push(newRow);
+                }
+                X_transformed = newX;
+            }
+
+            X_transformed = X_transformed.map(row => [1, ...row]);
+            let coef = new Array(X_transformed[0].length).fill(0);
+
+            for (let iter = 0; iter < iterations; iter++) {
+                const predictions = X_transformed.map(row => 
+                    row.reduce((sum, val, j) => sum + val * coef[j], 0)
+                );
+                const errors = predictions.map((p, i) => p - y[i]);
+                const m = X_transformed.length;
+
+                const gradients = X_transformed[0].map((_, j) => {
+                    let grad = (1 / m) * X_transformed.reduce((sum, row, i) => 
+                        sum + row[j] * errors[i], 0
+                    );
+                    if (regularization === 'l2' && j > 0) {
+                        grad += (alpha / m) * coef[j];
+                    } else if (regularization === 'l1' && j > 0) {
+                        grad += (alpha / m) * Math.sign(coef[j]);
+                    }
+                    return grad;
+                });
+
+                coef = coef.map((c, j) => c - learningRate * gradients[j]);
+            }
+
+            return {
+                scaler: scaler,
+                coef: coef,
+                degree: degree,
+                predict: function(X_pred) {
+                    let X_pred_transformed = this.scaler.transform(X_pred);
+                    if (this.degree > 1) {
+                        const newX = [];
+                        for (let i = 0; i < X_pred_transformed.length; i++) {
+                            const row = X_pred_transformed[i];
+                            const newRow = [...row];
+                            for (let j = 0; j < row.length; j++) {
+                                for (let k = j; k < row.length; k++) {
+                                    newRow.push(row[j] * row[k]);
+                                }
+                            }
+                            newX.push(newRow);
+                        }
+                        X_pred_transformed = newX;
+                    }
+                    X_pred_transformed = X_pred_transformed.map(row => [1, ...row]);
+                    return X_pred_transformed.map(row => 
+                        row.reduce((sum, val, j) => sum + val * this.coef[j], 0)
+                    );
+                }
+            };
+        }
+
+        function createLinearRegressionSection() {
+            const section = document.createElement('div');
+            section.className = 'lr-section';
+
+            const title = document.createElement('h3');
+            title.textContent = 'Linear Regression';
+            section.appendChild(title);
+
+            const controls = document.createElement('div');
+            controls.className = 'lr-controls';
+
+            const featuresContainer = document.createElement('div');
+            featuresContainer.className = 'lr-select-container';
+            const featuresLabel = document.createElement('label');
+            featuresLabel.textContent = 'Features (Select Multiple):';
+            const featuresSelect = document.createElement('select');
+            featuresSelect.className = 'lr-features';
+            featuresSelect.multiple = true;
+            featuresSelect.style.width = '200px';
+            featuresSelect.style.height = '100px';
+            featuresContainer.appendChild(featuresLabel);
+            featuresContainer.appendChild(featuresSelect);
+            controls.appendChild(featuresContainer);
+
+            const targetContainer = document.createElement('div');
+            targetContainer.className = 'lr-select-container';
+            const targetLabel = document.createElement('label');
+            targetLabel.textContent = 'Target:';
+            const targetSelect = document.createElement('select');
+            targetSelect.className = 'lr-target';
+            targetSelect.style.width = '200px';
+            targetContainer.appendChild(targetLabel);
+            targetContainer.appendChild(targetSelect);
+            controls.appendChild(targetContainer);
+
+            const advancedButton = document.createElement('button');
+            advancedButton.textContent = 'View Advanced Options';
+            controls.appendChild(advancedButton);
+
+            const advancedOptions = document.createElement('div');
+            advancedOptions.className = 'lr-advanced-options';
+
+            const regTypeLabel = document.createElement('label');
+            regTypeLabel.textContent = 'Regularization Type:';
+            const regTypeSelect = document.createElement('select');
+            regTypeSelect.innerHTML = `
+                <option value="none">None (Basic)</option>
+                <option value="l1">Lasso (L1)</option>
+                <option value="l2">Ridge (L2)</option>
+            `;
+            advancedOptions.appendChild(regTypeLabel);
+            advancedOptions.appendChild(regTypeSelect);
+
+            const alphaContainer = document.createElement('div');
+            alphaContainer.className = 'alpha-container';
+            alphaContainer.style.display = 'none';
+            const alphaLabel = document.createElement('label');
+            alphaLabel.textContent = 'Alpha (Regularization Strength):';
+            const alphaInput = document.createElement('input');
+            alphaInput.type = 'number';
+            alphaInput.value = '0.1';
+            alphaInput.step = '0.01';
+            alphaInput.min = '0';
+            alphaContainer.appendChild(alphaLabel);
+            alphaContainer.appendChild(alphaInput);
+            advancedOptions.appendChild(alphaContainer);
+
+            const polyContainer = document.createElement('div');
+            polyContainer.className = 'poly-container';
+            const polyLabel = document.createElement('label');
+            polyLabel.textContent = 'Polynomial Degree (1 for none):';
+            const polyInput = document.createElement('input');
+            polyInput.type = 'number';
+            polyInput.value = '1';
+            polyInput.min = '1';
+            polyInput.max = '2';
+            polyContainer.appendChild(polyLabel);
+            polyContainer.appendChild(polyInput);
+            advancedOptions.appendChild(polyContainer);
+
+            const optimizeButton = document.createElement('button');
+            optimizeButton.textContent = 'Optimize Model';
+            advancedOptions.appendChild(optimizeButton);
+
+            controls.appendChild(advancedOptions);
+            section.appendChild(controls);
+
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'lr-buttons';
+            const predictButton = document.createElement('button');
+            predictButton.textContent = 'Make Prediction';
+            const resetButton = document.createElement('button');
+            resetButton.textContent = 'Reset';
+            resetButton.style.backgroundColor = '#f44336';
+            buttonsContainer.appendChild(predictButton);
+            buttonsContainer.appendChild(resetButton);
+            section.appendChild(buttonsContainer);
+
+            const resultsDiv = document.createElement('div');
+            resultsDiv.className = 'lr-results';
+            section.appendChild(resultsDiv);
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'remove-button';
+            removeButton.addEventListener('click', () => {
+                section.remove();
+            });
+            section.appendChild(removeButton);
+
+            populateLrSelects(section);
+
+            advancedButton.addEventListener('click', () => {
+                advancedOptions.style.display = advancedOptions.style.display === 'none' ? 'flex' : 'none';
+            });
+
+            regTypeSelect.addEventListener('change', () => {
+                alphaContainer.style.display = regTypeSelect.value === 'none' ? 'none' : 'block';
+            });
+
+            predictButton.addEventListener('click', () => {
+                trainAndPredictLr(section);
+            });
+
+            optimizeButton.addEventListener('click', () => {
+                optimizeModelLr(section);
+            });
+
+            resetButton.addEventListener('click', () => {
+                resetLr(section);
+            });
+
+            return section;
+        }
+
+        function populateLrSelects(section) {
+            const featuresSelect = section.querySelector('.lr-features');
+            const targetSelect = section.querySelector('.lr-target');
+            const headerCells = document.querySelectorAll('#dynamicTable thead th:not(.row-number)');
+
+            featuresSelect.innerHTML = '';
+            targetSelect.innerHTML = '';
+
+            headerCells.forEach((header, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = header.textContent || `Column ${index + 1}`;
+                featuresSelect.appendChild(option.cloneNode(true));
+                targetSelect.appendChild(option);
+            });
+        }
+
+        function updateLrSelects() {
+            const lrSections = document.querySelectorAll('.lr-section');
+            lrSections.forEach(section => {
+                populateLrSelects(section);
+            });
+        }
+
+        function trainAndPredictLr(section) {
+            const featuresSelect = section.querySelector('.lr-features');
+            const selectedFeatures = Array.from(featuresSelect.selectedOptions).map(opt => parseInt(opt.value));
+            const targetSelect = section.querySelector('.lr-target');
+            const selectedTarget = parseInt(targetSelect.value);
+            const regTypeSelect = section.querySelector('.lr-advanced-options select');
+            const alphaInput = section.querySelector('.alpha-container input[type="number"]');
+            const polyInput = section.querySelector('.poly-container input[type="number"]');
+            const resultsDiv = section.querySelector('.lr-results');
+
+            if (selectedFeatures.length === 0) {
+                resultsDiv.innerHTML = "<strong>Error:</strong> Please select at least one feature.";
+                return;
+            }
+
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const X_train = [], y_train = [];
+            const X_all = [];
+            const validRowIndices = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const featureValues = [];
+                let hasEmptyFeature = false;
+
+                for (const featureIndex of selectedFeatures) {
+                    const cell = rows[i].cells[featureIndex + 1];
+                    const valueText = cell?.innerText.trim() || '';
+                    const value = parseFloat(valueText);
+                    if (valueText === '' || isNaN(value)) {
+                        hasEmptyFeature = true;
+                        break;
+                    }
+                    featureValues.push(value);
+                }
+
+                if (!hasEmptyFeature) {
+                    const targetCell = rows[i].cells[selectedTarget + 1];
+                    const targetValueText = targetCell?.innerText.trim() || '';
+                    const targetValue = parseFloat(targetValueText);
+
+                    if (targetValueText !== '' && !isNaN(targetValue)) {
+                        X_train.push(featureValues);
+                        y_train.push(targetValue);
+                    }
+                    X_all.push(featureValues);
+                    validRowIndices.push(i);
+                }
+            }
+
+            if (X_train.length === 0 || y_train.length === 0) {
+                resultsDiv.innerHTML = "<strong>Error:</strong> No valid training data found.";
+                return;
+            }
+
+            const options = {
+                regularization: regTypeSelect.value,
+                alpha: alphaInput ? parseFloat(alphaInput.value) : 0,
+                degree: polyInput ? parseInt(polyInput.value) : 1
+            };
+
+            const model = trainLinearRegression(X_train, y_train, options);
+            const predictions = model.predict(X_all);
+
+            const headerRow = document.querySelector('#dynamicTable thead tr');
+            const newHeader = document.createElement('th');
+            newHeader.contentEditable = true;
+            newHeader.style.backgroundColor = '#0d8bf1';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.textContent = 'LR Prediction';
+            headerRow.appendChild(newHeader);
+
+            rows.forEach((row, index) => {
+                const newCell = document.createElement('td');
+                newCell.contentEditable = true;
+                const predIndex = validRowIndices.indexOf(index);
+                newCell.textContent = predIndex !== -1 ? predictions[predIndex].toFixed(2) : '';
+                row.appendChild(newCell);
+            });
+
+            resultsDiv.innerHTML = `<strong>Success:</strong> Predictions added to table.`;
+            updateColumnSelect();
+            updateKnnSelects();
+            updateLrSelects();
+        }
+
+        function optimizeModelLr(section) {
+            const featuresSelect = section.querySelector('.lr-features');
+            const selectedFeatures = Array.from(featuresSelect.selectedOptions).map(opt => parseInt(opt.value));
+            const targetSelect = section.querySelector('.lr-target');
+            const selectedTarget = parseInt(targetSelect.value);
+            const resultsDiv = section.querySelector('.lr-results');
+
+            if (selectedFeatures.length === 0) {
+                resultsDiv.innerHTML = "<strong>Error:</strong> Please select at least one feature.";
+                return;
+            }
+
+            const rows = document.querySelectorAll('#dynamicTable tbody tr');
+            const X = [], y = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const featureValues = [];
+                let hasEmpty = false;
+
+                for (const featureIndex of selectedFeatures) {
+                    const cell = rows[i].cells[featureIndex + 1];
+                    const valueText = cell?.innerText.trim();
+                    if (!cell || valueText === '' || isNaN(parseFloat(valueText))) {
+                        hasEmpty = true;
+                        break;
+                    }
+                    featureValues.push(parseFloat(valueText));
+                }
+
+                if (!hasEmpty) {
+                    const targetCell = rows[i].cells[selectedTarget + 1];
+                    const targetValueText = targetCell?.innerText.trim();
+                    const targetValue = targetValueText ? parseFloat(targetValueText) : NaN;
+                    if (!isNaN(targetValue)) {
+                        X.push(featureValues);
+                        y.push(targetValue);
+                    }
+                }
+            }
+
+            if (X.length < 5) {
+                resultsDiv.innerHTML = `<strong>Error:</strong> Not enough data for optimization (need at least 5 rows, found ${X.length}).`;
+                return;
+            }
+
+            const trainSize = Math.floor(X.length * 0.8);
+            const X_train = X.slice(0, trainSize);
+            const y_train = y.slice(0, trainSize);
+            const X_test = X.slice(trainSize);
+            const y_test = y.slice(trainSize);
+
+            const hyperparams = [
+                { regularization: 'none', alpha: 0, degree: 1 },
+                { regularization: 'l1', alpha: 0.01, degree: 1 },
+                { regularization: 'l1', alpha: 0.1, degree: 1 },
+                { regularization: 'l1', alpha: 1, degree: 1 },
+                { regularization: 'l2', alpha: 0.01, degree: 1 },
+                { regularization: 'l2', alpha: 0.1, degree: 1 },
+                { regularization: 'l2', alpha: 1, degree: 1 },
+                { regularization: 'none', alpha: 0, degree: 2 },
+                { regularization: 'l1', alpha: 0.01, degree: 2 },
+                { regularization: 'l1', alpha: 0.1, degree: 2 },
+                { regularization: 'l1', alpha: 1, degree: 2 },
+                { regularization: 'l2', alpha: 0.01, degree: 2 },
+                { regularization: 'l2', alpha: 0.1, degree: 2 },
+                { regularization: 'l2', alpha: 1, degree: 2 },
+            ];
+
+            let bestMSE = Infinity;
+            let bestParams = null;
+
+            for (const params of hyperparams) {
+                const model = trainLinearRegression(X_train, y_train, params);
+                const predictions = model.predict(X_test);
+                const mse = predictions.reduce((sum, p, i) => sum + Math.pow(p - y_test[i], 2), 0) / y_test.length;
+                if (mse < bestMSE) {
+                    bestMSE = mse;
+                    bestParams = params;
+                }
+            }
+
+            const regTypeSelect = section.querySelector('.lr-advanced-options select');
+            const alphaInput = section.querySelector('.alpha-container input[type="number"]');
+            const polyInput = section.querySelector('.poly-container input[type="number"]');
+
+            regTypeSelect.value = bestParams.regularization;
+            regTypeSelect.dispatchEvent(new Event('change'));
+            alphaInput.value = bestParams.alpha;
+            polyInput.value = bestParams.degree;
+
+            resultsDiv.innerHTML = `<strong>Best Parameters Set:</strong> Regularization: ${bestParams.regularization}, Alpha: ${bestParams.alpha}, Degree: ${bestParams.degree}. Click 'Make Prediction' to use them.`;
+        }
+
+        function resetLr(section) {
+            const featuresSelect = section.querySelector('.lr-features');
+            const targetSelect = section.querySelector('.lr-target');
+            const regTypeSelect = section.querySelector('.lr-advanced-options select');
+            const alphaInput = section.querySelector('.alpha-container input[type="number"]');
+            const polyInput = section.querySelector('.poly-container input[type="number"]');
+            const resultsDiv = section.querySelector('.lr-results');
+            const advancedOptions = section.querySelector('.lr-advanced-options');
+
+            featuresSelect.selectedIndex = -1;
+            targetSelect.selectedIndex = 0;
+            regTypeSelect.selectedIndex = 0;
+            alphaInput.value = '0.1';
+            polyInput.value = '1';
+            advancedOptions.style.display = 'none';
             resultsDiv.innerHTML = '';
         }
 
