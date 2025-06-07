@@ -114,14 +114,13 @@ Ensure an internet connection is available during the first run to fetch externa
   - Edit the project title at the top of the table, which is saved locally using localStorage.
 
 ### Project Structure
-
 reverie/
-├── index.html        # Main HTML file with UI and logic
-├── index.css         # CSS styles (if separate)
-├── images/           # Icons and images used in the UI
-├── package.json      # Node.js dependencies and scripts
-├── main.js           # Electron main process (if applicable)
-└── README.md         # This file
+- index.html        # Main HTML file with UI and logic
+- index.css         # CSS styles (if separate)
+- images/           # Icons and images used in the UI
+- package.json      # Node.js dependencies and scripts
+- main.js           # Electron main process (if applicable)
+- README.md         # This file
 
 ### Development
 To contribute to Reverie or extend its functionality:
