@@ -450,6 +450,8 @@
             <div class="popup-menu">
                 <a href="#" id="knnOption">KNN Prediction</a>
                 <a href="#" id="linearRegressionOption">Linear Regression</a>
+                <a href="#" id="kmeansOption">K-means Clustering</a>
+                <a href="#" id="logisticOption">Logistic Regression</a>
             </div>
         </div>
         <div class="block">
@@ -2630,6 +2632,527 @@
         });
 
         document.getElementById('cancelMissingValuesBtn').addEventListener('click', hideAllDialogs);
+
+         // K-means section
+document.getElementById("kmeansOption").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const hasData = document.querySelector("#dynamicTable thead th:not(.row-number)");
+    if (!hasData) {
+        alert("Please import or create a DataFrame first.");
+        return;
+    }
+
+    const section = document.createElement("div");
+    section.className = "stats-section";
+
+    const title = document.createElement("h2");
+    title.textContent = "K-Means Clustering";
+
+    const kLabel = document.createElement("label");
+    kLabel.textContent = "Number of Clusters (K):";
+    const kInput = document.createElement("input");
+    kInput.type = "number";
+    kInput.min = 1;
+    kInput.value = 2;
+    kInput.id = "kmeans-k";
+
+    const featureLabel = document.createElement("label");
+    featureLabel.textContent = "Select Features:";
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.id = "kmeans-feature-checkboxes";
+    checkboxContainer.style.maxHeight = "150px";
+    checkboxContainer.style.overflowY = "auto";
+    checkboxContainer.style.border = "1px solid #ccc";
+    checkboxContainer.style.padding = "5px";
+
+    const resultBox = document.createElement("div");
+    resultBox.id = "kmeans-results";
+    resultBox.className = "results-box";
+
+    const runButton = document.createElement("button");
+    runButton.textContent = "Run";
+    runButton.style.backgroundColor = "#2196f3";
+    runButton.style.color = "white";
+    runButton.style.padding = "8px 16px";
+
+    const clearButton = document.createElement("button");
+    clearButton.textContent = "Rest";
+    clearButton.style.backgroundColor = "red";
+    clearButton.style.color = "white";
+    clearButton.style.marginLeft = "10px";
+    clearButton.style.padding = "8px 16px";
+
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.style.backgroundColor = "red";
+    removeButton.className = "remove-button";
+    removeButton.style.marginLeft = "10px";
+    removeButton.style.padding = "8px 16px";
+
+    section.appendChild(title);
+
+    const kContainer = document.createElement("div");
+    kContainer.style.marginBottom = "15px";
+    kContainer.appendChild(kLabel);
+    kContainer.appendChild(kInput);
+
+    const featureContainer = document.createElement("div");
+    featureContainer.style.marginBottom = "15px";
+    featureContainer.appendChild(featureLabel);
+    featureContainer.appendChild(checkboxContainer);
+    
+    section.appendChild(kContainer);
+    section.appendChild(featureContainer);
+    section.appendChild(runButton);
+    section.appendChild(clearButton);
+    section.appendChild(removeButton);
+    section.appendChild(resultBox);
+
+    document.getElementById("stats-sections-container").appendChild(section);
+
+    populateKMeansColumnOptions();
+
+    runButton.addEventListener("click", () => {
+        const k = parseInt(kInput.value);
+        const selectedIndices = Array.from(
+            checkboxContainer.querySelectorAll('input[type="checkbox"]:checked')
+        ).map(cb => parseInt(cb.value));
+
+        if (selectedIndices.length === 0) {
+            alert("Please select at least one column.");
+            return;
+        }
+
+        const rows = document.querySelectorAll("#dynamicTable tbody tr");
+        const data = [];
+
+        for (let row of rows) {
+            const rowData = [];
+            let isValid = true;
+
+            selectedIndices.forEach(i => {
+                const cell = row.cells[i + 1];
+                const value = parseFloat(cell.textContent.trim());
+                if (isNaN(value)) isValid = false;
+                else rowData.push(value);
+            });
+
+            if (isValid) data.push(rowData);
+        }
+
+        if (data.length < k) {
+            alert("Not enough valid rows to cluster.");
+            return;
+        }
+
+        const result = simpleKMeans(data, k);
+        displayClusterColumn(result);
+        resultBox.innerHTML = `<strong>Success:</strong> Clustering done with K = ${k}`;
+
+    });
+
+    clearButton.addEventListener("click", () => {
+        resultBox.textContent = "";
+        kInput.value = 2;
+
+        const checkboxes = checkboxContainer.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+
+        const headerRow = document.querySelector("#dynamicTable thead tr");
+        const bodyRows = document.querySelectorAll("#dynamicTable tbody tr");
+        const clusterIndex = Array.from(headerRow.cells).findIndex(cell => cell.textContent === "Cluster");
+
+        if (clusterIndex !== -1) {
+            headerRow.deleteCell(clusterIndex);
+            bodyRows.forEach(row => row.deleteCell(clusterIndex));
+        }
+    });
+
+    removeButton.addEventListener("click", () => {
+        section.remove();
+    });
+});
+
+function populateKMeansColumnOptions() {
+    const container = document.getElementById("kmeans-feature-checkboxes");
+    if (!container) return;
+
+    container.innerHTML = "";
+    const headers = document.querySelectorAll("#dynamicTable thead th:not(.row-number)");
+
+    const excluded = ["cluster", "knn prediction", "lr prediction", "logr prediction"];
+
+    headers.forEach((th, index) => {
+        const colName = th.textContent.trim().toLowerCase();
+        if (excluded.includes(colName)) return;
+
+        const label = document.createElement("label");
+        label.style.display = "block";
+        label.style.fontFamily = "Open Sans";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = index;
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + th.textContent));
+        container.appendChild(label);
+    });
+}
+
+const table = document.getElementById("dynamicTable");
+if (table) {
+    const observer = new MutationObserver(() => {
+        const container = document.getElementById("kmeans-feature-checkboxes");
+        if (container) populateKMeansColumnOptions();
+    });
+
+    observer.observe(table, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: false
+    });
+}
+
+function simpleKMeans(data, k, maxIterations = 100) {
+    const centroids = [];
+    const assignments = new Array(data.length).fill(0);
+
+    while (centroids.length < k) {
+        const rand = data[Math.floor(Math.random() * data.length)];
+        if (!centroids.some(c => JSON.stringify(c) === JSON.stringify(rand))) {
+            centroids.push([...rand]);
+        }
+    }
+
+    for (let iter = 0; iter < maxIterations; iter++) {
+        data.forEach((point, i) => {
+            let minDist = Infinity, assigned = 0;
+            centroids.forEach((c, idx) => {
+                const dist = Math.sqrt(point.reduce((sum, val, d) => sum + (val - c[d]) ** 2, 0));
+                if (dist < minDist) {
+                    minDist = dist;
+                    assigned = idx;
+                }
+            });
+            assignments[i] = assigned;
+        });
+
+        const sums = Array.from({ length: k }, () => Array(data[0].length).fill(0));
+        const counts = Array(k).fill(0);
+
+        data.forEach((point, i) => {
+            const cluster = assignments[i];
+            point.forEach((val, d) => sums[cluster][d] += val);
+            counts[cluster]++;
+        });
+
+        centroids.forEach((c, i) => {
+            if (counts[i] > 0) {
+                c.forEach((_, d) => c[d] = sums[i][d] / counts[i]);
+            }
+        });
+    }
+
+    return assignments;
+}
+
+function displayClusterColumn(assignments) {
+    const headerRow = document.querySelector("#dynamicTable thead tr");
+    const bodyRows = document.querySelectorAll("#dynamicTable tbody tr");
+
+    const existingIndex = Array.from(headerRow.cells).findIndex(cell => cell.textContent === "Cluster");
+    if (existingIndex !== -1) {
+        headerRow.deleteCell(existingIndex);
+        bodyRows.forEach(row => row.deleteCell(existingIndex));
+    }
+
+    const th = document.createElement("th");
+    th.textContent = "Cluster";
+    th.style.backgroundColor = "#0d8bf1";
+    th.style.color = "white";
+    headerRow.appendChild(th);
+
+    bodyRows.forEach((row, i) => {
+        const td = document.createElement("td");
+        td.textContent = assignments[i];
+        td.style.color = "black";
+        row.appendChild(td);
+    });
+}
+
+// Logistic Regression section
+const logisticOption = document.getElementById("logisticOption");
+logisticOption.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const hasData = document.querySelector("#dynamicTable thead th:not(.row-number)");
+    if (!hasData) {
+        alert("Please import or create a DataFrame first.");
+        return;
+    }
+
+    const section = document.createElement("div");
+    section.className = "stats-section";
+
+    const title = document.createElement("h2");
+    title.textContent = "Logistic Regression";
+
+    const featureLabel = document.createElement("label");
+    featureLabel.textContent = "Select Features:";
+    const featureContainer = document.createElement("div");
+    featureContainer.id = "logistic-feature-checkboxes";
+    featureContainer.style.maxHeight = "150px";
+    featureContainer.style.overflowY = "auto";
+    featureContainer.style.border = "1px solid #ccc";
+    featureContainer.style.padding = "5px";
+    featureContainer.style.marginBottom = "10px";
+
+    const targetLabel = document.createElement("label");
+    targetLabel.textContent = "Select Target:";
+    const targetSelect = document.createElement("select");
+    targetSelect.id = "logistic-target-select";
+    targetSelect.style.marginBottom = "15px";
+
+    const resultBox = document.createElement("div");
+    resultBox.id = "logistic-results";
+    resultBox.className = "results-box";
+
+    const runButton = document.createElement("button");
+    runButton.textContent = "Run";
+    runButton.style.backgroundColor = "#2196f3";
+    runButton.style.color = "white";
+
+    const clearButton = document.createElement("button");
+    clearButton.textContent = "Rest";
+    clearButton.style.backgroundColor = "red";
+    clearButton.style.color = "white";
+    clearButton.style.marginLeft = "10px";
+
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.style.backgroundColor = "red";
+    removeButton.className = "remove-button";
+    removeButton.style.marginLeft = "10px";
+
+    section.appendChild(title);
+    section.appendChild(featureLabel);
+    section.appendChild(featureContainer);
+    section.appendChild(targetLabel);
+    section.appendChild(targetSelect);
+    section.appendChild(runButton);
+    section.appendChild(clearButton);
+    section.appendChild(removeButton);
+    section.appendChild(resultBox);
+
+    document.getElementById("stats-sections-container").appendChild(section);
+
+    populateLogisticColumnOptions();
+
+    runButton.addEventListener("click", () => {
+        const selectedFeatures = Array.from(
+            document.querySelectorAll('#logistic-feature-checkboxes input[type="checkbox"]:checked')
+        ).map(cb => parseInt(cb.value));
+
+        const targetIndex = parseInt(targetSelect.value);
+
+        if (selectedFeatures.length === 0) {
+            alert("Please select at least one feature.");
+            return;
+        }
+
+        if (isNaN(targetIndex)) {
+            alert("Please select a target column.");
+            return;
+        }
+
+        const rows = document.querySelectorAll("#dynamicTable tbody tr");
+        const X = [], y = [];
+
+        for (let row of rows) {
+            const rowData = [];
+            let valid = true;
+
+            selectedFeatures.forEach(i => {
+                const cell = row.cells[i + 1];
+                const val = parseFloat(cell.textContent.trim());
+                if (isNaN(val)) valid = false;
+                else rowData.push(val);
+            });
+
+            const targetVal = row.cells[targetIndex + 1]?.textContent.trim();
+            const targetNum = parseInt(targetVal);
+
+            if (valid && (targetNum === 0 || targetNum === 1)) {
+                X.push(rowData);
+                y.push(targetNum);
+            }
+        }
+
+        if (X.length === 0) {
+            alert("No valid rows to process.");
+            return;
+        }
+
+        const weights = trainLogisticRegression(X, y);
+        const predictions = classify(X, weights);
+        displayPredictionColumn(predictions);
+
+        let output = "<strong>Success:</strong> Predictions added to table.";
+        resultBox.innerHTML = output;
+    });
+
+    clearButton.addEventListener("click", () => {
+        resultBox.innerText = "";
+        document.querySelectorAll('#logistic-feature-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        targetSelect.selectedIndex = -1;
+
+        const headerRow = document.querySelector("#dynamicTable thead tr");
+        const bodyRows = document.querySelectorAll("#dynamicTable tbody tr");
+        const predictionIndex = Array.from(headerRow.cells).findIndex(cell => cell.textContent === "LogR Prediction");
+
+        if (predictionIndex !== -1) {
+            headerRow.deleteCell(predictionIndex);
+            bodyRows.forEach(row => row.deleteCell(predictionIndex));
+        }
+    });
+
+    removeButton.addEventListener("click", () => {
+        section.remove();
+    });
+});
+
+const excludedCols = ["cluster", "knn prediction", "lr prediction", "logr prediction"];
+
+function populateLogisticColumnOptions() {
+    const headers = document.querySelectorAll("#dynamicTable thead th:not(.row-number)");
+    const container = document.getElementById("logistic-feature-checkboxes");
+    const targetSelect = document.getElementById("logistic-target-select");
+
+    if (!container || !targetSelect) return;
+
+    container.innerHTML = "";
+    targetSelect.innerHTML = "";
+
+    headers.forEach((th, index) => {
+        const colName = th.textContent.trim();
+        const colLower = colName.toLowerCase();
+
+        if (excludedCols.includes(colLower)) return;
+
+        const label = document.createElement("label");
+        label.style.display = "block";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = index;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + colName));
+        container.appendChild(label);
+
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = colName;
+        targetSelect.appendChild(option);
+    });
+
+    targetSelect.selectedIndex = -1;
+}
+
+function displayPredictionColumn(predictions) {
+    const headerRow = document.querySelector("#dynamicTable thead tr");
+    const bodyRows = document.querySelectorAll("#dynamicTable tbody tr");
+
+    const existingIndex = Array.from(headerRow.cells).findIndex(cell => cell.textContent === "LogR Prediction");
+    if (existingIndex !== -1) {
+        headerRow.deleteCell(existingIndex);
+        bodyRows.forEach(row => row.deleteCell(existingIndex));
+    }
+
+    const th = document.createElement("th");
+    th.textContent = "LogR Prediction";
+    th.style.backgroundColor = "#0d8bf1";
+    headerRow.appendChild(th);
+
+    bodyRows.forEach((row, i) => {
+        const td = document.createElement("td");
+        td.textContent = predictions[i];
+        td.style.color = "#black";
+        row.appendChild(td);
+    });
+}
+
+const logisticTable = document.getElementById("dynamicTable");
+if (logisticTable) {
+    const observer = new MutationObserver(() => {
+        const sectionVisible = document.querySelector("#logistic-feature-checkboxes");
+        if (sectionVisible) {
+            populateLogisticColumnOptions();
+        }
+    });
+
+    observer.observe(logisticTable, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+}
+
+// === LOGISTIC REGRESSION CORE ===
+function sigmoid(z) {
+    return 1 / (1 + Math.exp(-z));
+}
+
+function initializeWeights(n) {
+    return new Array(n).fill(0);
+}
+
+function predict(features, weights) {
+    return features.map(row => sigmoid(row.reduce((sum, val, i) => sum + val * weights[i], 0)));
+}
+
+function computeLoss(predictions, labels) {
+    const n = labels.length;
+    let loss = 0;
+    for (let i = 0; i < n; i++) {
+        const p = predictions[i];
+        const y = labels[i];
+        loss += -y * Math.log(p + 1e-15) - (1 - y) * Math.log(1 - p + 1e-15);
+    }
+    return loss / n;
+}
+
+function computeGradient(X, y, weights) {
+    const n = X.length;
+    const m = X[0].length;
+    const gradients = new Array(m).fill(0);
+    const predictions = predict(X, weights);
+
+    for (let j = 0; j < m; j++) {
+        for (let i = 0; i < n; i++) {
+            gradients[j] += (predictions[i] - y[i]) * X[i][j];
+        }
+        gradients[j] /= n;
+    }
+
+    return gradients;
+}
+
+function trainLogisticRegression(X, y, learningRate = 0.1, epochs = 1000) {
+    const weights = initializeWeights(X[0].length);
+    for (let epoch = 0; epoch < epochs; epoch++) {
+        const gradients = computeGradient(X, y, weights);
+        for (let j = 0; j < weights.length; j++) {
+            weights[j] -= learningRate * gradients[j];
+        }
+    }
+    return weights;
+}
+
+function classify(X, weights, threshold = 0.5) {
+    return predict(X, weights).map(p => (p >= threshold ? 1 : 0));
+}
     </script>
 </body>
 </html>
