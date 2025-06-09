@@ -34,4 +34,4 @@ cursor.executemany('''
 conn.commit()
 conn.close()
 
-print("employees.db created successfully!")
+print("employees2.db created successfully!")

@@ -965,63 +965,81 @@
         }
 
         function handleMissingValues() {
-            const colIndex = parseInt(document.getElementById('missingValuesColumn').value);
-            const method = document.getElementById('handlingMethod').value;
+    const colIndex = parseInt(document.getElementById('missingValuesColumn').value);
+    const method = document.getElementById('handlingMethod').value;
 
-            if (method === 'remove') {
-                const rows = document.querySelectorAll('#dynamicTable tbody tr');
-                rows.forEach(row => {
-                    const cell = row.cells[colIndex + 1];
-                    if (!cell.textContent.trim()) {
-                        row.remove();
-                    }
-                });
-                updateRowNumbers();
-            } else {
-                const imputationType = document.getElementById('imputationType').value;
-                const rows = document.querySelectorAll('#dynamicTable tbody tr');
-                let imputeValue = null;
-                let previousValue = null;
+    if (method === 'remove') {
+        const rows = document.querySelectorAll('#dynamicTable tbody tr');
+        rows.forEach(row => {
+            const cell = row.cells[colIndex + 1];
+            if (!cell.textContent.trim()) {
+                row.remove();
+            }
+        });
+        updateRowNumbers();
+    } else {
+        const imputationType = document.getElementById('imputationType').value;
+        const rows = document.querySelectorAll('#dynamicTable tbody tr');
+        let imputeValue = null;
+        let previousValue = null;
 
-                const numericValues = [];
+        switch (imputationType) {
+            case 'mean':
+                const numericValuesMean = [];
                 rows.forEach(row => {
                     const cell = row.cells[colIndex + 1];
                     const value = parseFloat(cell.textContent);
                     if (!isNaN(value)) {
-                        numericValues.push(value);
+                        numericValuesMean.push(value);
                     }
                 });
-
-                switch (imputationType) {
-                    case 'mean':
-                        imputeValue = numericValues.length > 0 ? calculateMean(numericValues) : 0;
-                        break;
-                    case 'median':
-                        imputeValue = numericValues.length > 0 ? calculateMedian(numericValues) : 0;
-                        break;
-                    case 'mode':
-                        const modes = calculateMode(numericValues);
-                        imputeValue = modes.length > 0 ? modes[0] : 'N/A';
-                        break;
-                }
-
+                imputeValue = numericValuesMean.length > 0 ? calculateMean(numericValuesMean) : 0;
+                break;
+            case 'median':
+                const numericValuesMedian = [];
                 rows.forEach(row => {
                     const cell = row.cells[colIndex + 1];
-                    if (!cell.textContent.trim()) {
-                        if (imputationType === 'previous') {
-                            if (previousValue !== null) {
-                                cell.textContent = previousValue;
-                            }
-                        } else {
-                            cell.textContent = imputeValue;
-                        }
-                    } else {
-                        previousValue = imputationType === 'previous' ? cell.textContent : previousValue;
+                    const value = parseFloat(cell.textContent);
+                    if (!isNaN(value)) {
+                        numericValuesMedian.push(value);
                     }
                 });
-            }
-            hideAllDialogs();
+                imputeValue = numericValuesMedian.length > 0 ? calculateMedian(numericValuesMedian) : 0;
+                break;
+            case 'mode':
+                const allValues = [];
+                rows.forEach(row => {
+                    const cell = row.cells[colIndex + 1];
+                    const value = cell.textContent.trim();
+                    if (value !== '') {
+                        allValues.push(value);
+                    }
+                });
+                const modes = calculateMode(allValues);
+                imputeValue = modes.length > 0 ? modes[0] : 'N/A';
+                break;
+            case 'previous':
+                // Handled in the loop below
+                break;
         }
+
+        rows.forEach(row => {
+            const cell = row.cells[colIndex + 1];
+            if (!cell.textContent.trim()) {
+                if (imputationType === 'previous') {
+                    if (previousValue !== null) {
+                        cell.textContent = previousValue;
+                    }
+                } else {
+                    cell.textContent = imputeValue;
+                }
+            } else {
+                previousValue = cell.textContent.trim();
+            }
+        });
+    }
+    hideAllDialogs();
+}
 
         function standardizeText(colIndex) {
             const rows = document.querySelectorAll('#dynamicTable tbody tr');
@@ -1032,33 +1050,36 @@
         }
 
         function convertToNumeric(colIndex) {
-            const rows = document.querySelectorAll('#dynamicTable tbody tr');
-            let hasInvalid = false;
+    const rows = document.querySelectorAll('#dynamicTable tbody tr');
+    let hasInvalid = false;
 
-            rows.forEach(row => {
-                const cell = row.cells[colIndex + 1];
-                let original = cell.textContent.trim();
+    rows.forEach(row => {
+        const cell = row.cells[colIndex + 1];
+        let original = cell.textContent.trim();
 
-                if (original === '') return;
+        // Skip empty cells
+        if (original === '') return;
 
-                original = original.replace(/^"(.*)"$/, '$1');
+        // Remove surrounding single and double quotes
+        original = original.replace(/^['"]|['"]$/g, '');
 
-                if (original.startsWith('INVALID: ')) return;
+        // Skip cells already marked as invalid
+        if (original.startsWith('INVALID: ')) return;
 
-                const number = parseFloat(original);
+        const number = parseFloat(original);
 
-                if (isNaN(number)) {
-                    cell.textContent = 'INVALID: ' + original;
-                    hasInvalid = true;
-                } else {
-                    cell.textContent = number.toString();
-                }
-            });
-
-            if (hasInvalid) {
-                alert('Some values couldn\'t be converted. Invalid entries are marked with "INVALID: " prefix.');
-            }
+        if (isNaN(number)) {
+            cell.textContent = 'INVALID: ' + original;
+            hasInvalid = true;
+        } else {
+            cell.textContent = number.toString();
         }
+    });
+
+    if (hasInvalid) {
+        alert('Some values couldn\'t be converted. Invalid entries are marked with "INVALID: " prefix.');
+    }
+}
 
         function squareValues(colIndex) {
             const rows = document.querySelectorAll('#dynamicTable tbody tr');
