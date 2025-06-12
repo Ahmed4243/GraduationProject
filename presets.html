@@ -12,24 +12,39 @@
         <div class="block"><a href="openProject.html" title="Open Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span class="icon-text">Open Project</span></a></div>
     </div>
 
-    <div class="page-wrapper">
-        <div class="main-content centered-page">
-            <h2>Open a Project</h2>
-            <p style="color: #7f8c8d; margin-bottom: 40px;">Load a previously saved Reverie project file.</p>
-            <div class="open-project-container" style="grid-template-columns: 1fr; max-width: 400px;">
-                <div class="open-project-option" id="openProjectFileBtn">
-                    <div class="open-project-icon">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
-                    </div>
-                    <button class="button">Open Project File (.reverie)</button>
-                </div>
+  <div class="page-wrapper">
+      <div class="main-content centered-page">
+          <h1 style="font-size: 2rem; font-weight: 600;">Select a Preset Project</h1>
+          <p style="color: #7f8c8d; margin-bottom: 20px;">Choose a pre-configured dataset to get started immediately.</p>
+          <hr style="width:50%; margin: 20px auto 40px auto;">
+
+          <div class="flex-container">
+            <div class="preset-card" data-preset="house-prices">
+                <div class="preset-description">Predict house prices based on features like area and bedrooms.</div>
+                <div class="card-button">House Prices</div>
             </div>
-        </div>
-    </div>
-    <script>
-        document.getElementById('openProjectFileBtn').addEventListener('click', () => {
-            window.electronAPI.openProject();
-        });
-    </script>
+            <div class="preset-card" data-preset="iris-classification">
+                <div class="preset-description">Classify Iris flower species using sepal and petal measurements.</div>
+                <div class="card-button">Iris Classification</div>
+            </div>
+            <div class="preset-card" data-preset="customer-churn">
+                <div class="preset-description">Analyze customer data to predict churn.</div>
+                <div class="card-button">Customer Churn</div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.preset-card');
+        if (card) {
+            const presetName = card.getAttribute('data-preset');
+            if (presetName) {
+                window.location.href = `newProject.html?preset=${presetName}`;
+            }
+        }
+    });
+  </script>
 </body>
 </html>

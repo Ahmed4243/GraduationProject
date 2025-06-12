@@ -1,133 +1,47 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
+const XLSX = require('xlsx');
+const sqlite3 = require('sqlite3').verbose(); // Added for SQLite support
 
 let mainWindow;
 
-const createWindow = () => {
+function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
+        width: 1400,
+        height: 900,
+        minWidth: 1200,
+        minHeight: 700,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            preload: path.join(__dirname, 'preload.js')
         },
-        icon: path.join(__dirname, 'images/icon.png')
+        icon: path.join(__dirname, 'images/icon.png'),
+        title: "Reverie"
     });
 
     mainWindow.loadFile('index.html');
 
-    // Open dev tools in development
-    if (process.env.NODE_ENV === 'development') {
-        mainWindow.webContents.openDevTools();
-    }
+    // Open dev tools for debugging. Comment out for production.
+    // mainWindow.webContents.openDevTools();
 
-    // Create custom menu
+    // A simplified menu for a cleaner look
     const menuTemplate = [
-        {
-            label: 'File',
-            submenu: [
-                {
-                    label: 'New Project',
-                    click: () => mainWindow.loadFile('newProject.html')
-                },
-                {
-                    label: 'Open Project',
-                    click: () => mainWindow.loadFile('openProject.html')
-                },
-                { type: 'separator' },
-                {
-                    label: 'Exit',
-                    click: () => app.quit()
-                }
-            ]
-        },
-        {
-            label: 'Edit',
-            submenu: [
-                { role: 'undo' },
-                { role: 'redo' },
-                { type: 'separator' },
-                { role: 'cut' },
-                { role: 'copy' },
-                { role: 'paste' },
-                { type: 'separator' },
-                {
-                    label: 'Add Row',
-                    click: () => mainWindow.webContents.send('add-row')
-                },
-                {
-                    label: 'Add Column',
-                    click: () => mainWindow.webContents.send('add-column')
-                }
-            ]
-        },
-        {
-            label: 'Insert',
-            submenu: [
-                {
-                    label: 'Create DataFrame',
-                    click: () => mainWindow.loadFile('DataFrame.html')
-                },
-                {
-                    label: 'KNN Classification',
-                    click: () => mainWindow.webContents.send('show-knn')
-                }
-            ]
-        },
-        {
-            label: 'View',
-            submenu: [
-                { role: 'reload' },
-                { role: 'forceReload' },
-                { role: 'toggledevtools' },
-                { type: 'separator' },
-                { role: 'resetzoom' },
-                { role: 'zoomin' },
-                { role: 'zoomout' },
-                { type: 'separator' },
-                { role: 'togglefullscreen' }
-            ]
-        },
-        {
-            label: 'Window',
-            submenu: [
-                { role: 'minimize' },
-                { role: 'zoom' },
-                { type: 'separator' },
-                { role: 'front' }
-            ]
-        }
+        { role: 'appMenu' },
+        { role: 'fileMenu' },
+        { role: 'editMenu' },
+        { role: 'viewMenu' },
+        { role: 'windowMenu' }
     ];
 
     const menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(menu);
 
-    // Handle window close
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 };
 
-// App lifecycle
-app.whenReady().then(() => {
-    createWindow();
-
-    // IPC Communication for KNN functionality
-    ipcMain.on('reset-knn', (event) => {
-        event.sender.send('knn-reset-complete');
-    });
-
-    ipcMain.on('train-knn', (event, data) => {
-        // Handle KNN training from renderer
-        event.sender.send('knn-training-complete', { success: true });
-    });
-
-    ipcMain.on('predict-knn', (event, data) => {
-        // Handle KNN prediction from renderer
-        event.sender.send('knn-prediction-complete', { success: true });
-    });
-});
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -138,5 +52,115 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
+    }
+});
+
+// --- IPC Handlers for File I/O & Project Management ---
+
+ipcMain.on('import-excel', async (event) => {
+    try {
+        const { filePaths } = await dialog.showOpenDialog(mainWindow, {
+            properties: ['openFile'], filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls', 'csv'] }]
+        });
+        if (filePaths && filePaths.length > 0) {
+            const workbook = XLSX.readFile(filePaths[0]);
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            event.reply('file-data-loaded', { success: true, headers: json[0] || [], rows: json.slice(1) || [] });
+        }
+    } catch(err) {
+        console.error(err);
+        event.reply('file-data-loaded', { success: false, error: 'Failed to read the Excel file.' });
+    }
+});
+
+ipcMain.on('import-sql', async (event) => {
+    try {
+        const { filePaths } = await dialog.showOpenDialog(mainWindow, {
+            properties: ['openFile'], filters: [{ name: 'SQLite Files', extensions: ['sqlite', 'db'] }]
+        });
+        if (filePaths && filePaths.length > 0) {
+            const db = new sqlite3.Database(filePaths[0], sqlite3.OPEN_READONLY, (err) => {
+                if (err) {
+                    console.error(err);
+                    event.reply('file-data-loaded', { success: false, error: 'Failed to open SQLite database.' });
+                    return;
+                }
+
+                // Query the first table found in the database
+                db.all("SELECT name FROM sqlite_master WHERE type='table' LIMIT 1", [], (err, tables) => {
+                    if (err || !tables || tables.length === 0) {
+                        db.close();
+                        event.reply('file-data-loaded', { success: false, error: 'No tables found in the database.' });
+                        return;
+                    }
+
+                    const tableName = tables[0].name;
+                    db.all(`PRAGMA table_info(${tableName})`, [], (err, columns) => {
+                        if (err) {
+                            db.close();
+                            event.reply('file-data-loaded', { success: false, error: 'Failed to get table schema.' });
+                            return;
+                        }
+
+                        const headers = columns.map(col => col.name);
+                        db.all(`SELECT * FROM ${tableName}`, [], (err, rows) => {
+                            db.close();
+                            if (err) {
+                                event.reply('file-data-loaded', { success: false, error: 'Failed to query table data.' });
+                                return;
+                            }
+
+                            // Convert rows to array of arrays (like Excel data)
+                            const dataRows = rows.map(row => headers.map(header => row[header] ?? ''));
+                            event.reply('file-data-loaded', { success: true, headers, rows: dataRows });
+                        });
+                    });
+                });
+            });
+        } else {
+            event.reply('file-data-loaded', { success: false, error: 'No file selected.' });
+        }
+    } catch (err) {
+        console.error(err);
+        event.reply('file-data-loaded', { success: false, error: 'Failed to read the SQLite file.' });
+    }
+});
+
+ipcMain.on('save-project', async (event, projectData) => {
+    try {
+        const { filePath } = await dialog.showSaveDialog(mainWindow, {
+            title: 'Save Reverie Project',
+            defaultPath: `${projectData.projectName || 'my-project'}.reverie`,
+            filters: [{ name: 'Reverie Project Files', extensions: ['reverie'] }]
+        });
+        if (filePath) {
+            fs.writeFileSync(filePath, JSON.stringify(projectData, null, 2));
+            event.reply('project-saved', { success: true, path: filePath });
+        }
+    } catch (err) {
+        console.error(err);
+        event.reply('project-saved', { success: false, error: err.message });
+    }
+});
+
+ipcMain.on('open-project', async () => {
+    try {
+        const { filePaths } = await dialog.showOpenDialog(mainWindow, {
+            title: 'Open Reverie Project',
+            properties: ['openFile'], filters: [{ name: 'Reverie Project Files', extensions: ['reverie'] }]
+        });
+        if (filePaths && filePaths.length > 0) {
+            const fileContent = fs.readFileSync(filePaths[0], 'utf-8');
+            const projectData = JSON.parse(fileContent);
+            
+            mainWindow.loadFile('newProject.html');
+            mainWindow.webContents.once('did-finish-load', () => {
+                 mainWindow.webContents.send('project-file-opened', { success: true, data: projectData });
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        mainWindow.webContents.send('project-file-opened', { success: false, error: 'Failed to open or parse project file.' });
     }
 });

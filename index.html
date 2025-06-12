@@ -4,71 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="block">
-      <a href="index.html" style="text-align: center;">
-        <img src="images/home.svg" width="30%" height="30%">
-      </a>    
+    <div class="sidebar">
+        <div class="block"><a href="index.html" title="Home"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="icon-text">Home</span></a></div>
+        <div class="block"><a href="newProject.html" title="New Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg><span class="icon-text">New Project</span></a></div>
+        <div class="block"><a href="openProject.html" title="Open Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span class="icon-text">Open Project</span></a></div>
     </div>
-    <div class="block">
-      <a href="newProject.html" style="text-align: center;">
-        <img src="images/file.svg" width="30%" height="30%">
-      </a>     
-    </div>
-    <div class="block">
-        <a href="openProject.html" style="text-align: center;">
-        <img src="images/folder.svg" width="30%" height="30%">
-        </a>
-    </div>
-    <hr style="width: 80%;">
-    <div class="block">
-      <a href="index.html" style="text-align: center;">
-        <img src="images/settings.svg" width="40%" height="40%">
-      </a>    
-    </div>
-  </div>
-    <div class="flex-container">
-      <a href="newProject.html">
-        <div class="card">
-          <div class="card-details">
-            <img src="images/hamburger.png" width="100%">
-          </div>
-          <button class="card-button">New Project</button>            
+
+    <div class="page-wrapper">
+        <div class="main-content centered-page">
+            <h1 style="font-size: 2.5rem; margin-bottom: 50px;">Welcome to Reverie</h1>
+            <div class="open-project-container">
+                <div class="open-project-option" data-href="newProject.html">
+                    <div class="open-project-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div class="button">New Blank Project</div>
+                </div>
+                <div class="open-project-option" id="openProjectBtn">
+                    <div class="open-project-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
+                    </div>
+                    <div class="button">Open Project File</div>
+                </div>
+            </div>
+            <a href="presets.html" style="text-decoration: none; margin-top: 50px; display: inline-block;">
+                <p style="color: var(--accent-color); font-size: 1.2rem; font-weight: 600;">Or start with a Preset Dataset →</p>
+            </a>
         </div>
-      </a>
-
     </div>
-    <p style="text-align: center;">Presets</p>
-    <hr style=" position: relative; width:30%; left: 10;">
 
-    <div class="flex-container">
-      <a href="">
-        <div class="card">
-          <div class="card-details">
-            <img src="images/line-chart.png" width="100%" height="100%">
-          </div>
-          <button class="card-button">Visualization</button>            
-      </div>
-      </a>
-      <a href="">
-        <div class="card">
-          <div class="card-details">
-            <img src="images/data.png" width="100%">
-          </div>
-          <button class="card-button">Analysis</button>            
-      </div>
-      </a>
-      <a href="">
-        <div class="card">
-          <div class="card-details">
-          <img src="images/computer.png" width="100%">
-          </div>
-          <button class="card-button">Info</button>            
-      </div>
-      </a>   
-    </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('[data-href="newProject.html"]').addEventListener('click', () => {
+            window.location.href = 'newProject.html';
+        });
+
+        document.getElementById('openProjectBtn').addEventListener('click', () => {
+            window.electronAPI.openProject();
+        });
+    });
+  </script>
 </body>
 </html>
