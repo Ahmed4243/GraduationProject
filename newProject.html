@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="block"><a href="index.html" title="Home"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="icon-text">Home</span></a></div>
+        <div class="block"><a href="newProject.html" title="New Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg><span class="icon-text">New Project</span></a></div>
+        <div class="block"><a href="openProject.html" title="Open Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span class="icon-text">Open Project</span></a></div>
+        <hr>
+        <div class="block">
+            <a href="#" title="Modeling"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="icon-text">Modeling</span></a>
+            <div class="popup-menu">
+                <a href="#" id="linearRegressionOption">Linear Regression</a>
+                <a href="#" id="logisticRegressionOption">Logistic Regression</a>
+                <a href="#" id="naiveBayesOption">Naive Bayes Classifier</a>
+                <a href="#" id="kmeansOption">K-Means Clustering</a>
+                <a href="#" id="knnOption">KNN Prediction</a>
+            </div>
+        </div>
+        <div class="block">
+            <a href="#" title="Analysis"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><span class="icon-text">Analysis</span></a>
+            <div class="popup-menu">
+                <a href="#" id="descriptiveStatsOption">Descriptive Statistics</a>
+                <a href="#" id="correlationAnalysisOption">Correlation Analysis</a>
+            </div>
+        </div>
+        <div class="block">
+            <a href="#" title="Visualization"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg><span class="icon-text">Visualization</span></a>
+            <div class="popup-menu">
+                <a href="#" id="histogramOption">Histogram</a>
+                <a href="#" id="barChartOption">Bar Chart</a>
+                <a href="#" id="scatterPlotOption">Scatter Plot</a>
+                <a href="#" id="pieChartOption">Pie Chart</a>
+            </div>
+        </div>
+        <div class="block">
+            <a href="#" title="Transformation"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg><span class="icon-text">Transformation</span></a>
+            <div class="popup-menu">
+                <a href="#" id="transposeOption">Transpose</a>
+                <a href="#" id="multiplyColumnsOption">Multiply Columns</a>
+                <a href="#" id="squareValuesOption">Square Values</a>
+                <a href="#" id="squareRootOption">Square Root</a>
+                <a href="#" id="capitalizeTextOption">Capitalize Text</a>
+                <a href="#" id="reverseTextOption">Reverse Text</a>
+                <a href="#" id="labelEncodingOption">Label Encoding</a>
+                <a href="#" id="appendStringOption">Append String</a>
+            </div>
+        </div>
+        <div class="block">
+            <a href="#" title="Cleaning"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.42 2.24a1 1 0 0 0-.84 0L2.34 6.3a1 1 0 0 0-.58.9V16.8a1 1 0 0 0 .58.9l9.24 4.06a1 1 0 0 0 .84 0l9.24-4.06a1 1 0 0 0 .58-.9V7.2a1 1 0 0 0-.58-.9L12.42 2.24Z"/><path d="M22 8 12 12 2 8"/><path d="m12 12-5.5 2.5"/><path d="m17.5 14.5-5.5-2.5"/><path d="M12 22V12"/></svg><span class="icon-text">Cleaning</span></a>
+            <div class="popup-menu">
+                <a href="#" id="handleMissingValues">Missing Values</a>
+                <a href="#" id="removeDuplicates">Remove Duplicates</a>
+                <a href="#" id="standardizeText">Standardize Text</a>
+                <a href="#" id="convertToNumeric">Convert to Numeric</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div id="mainContentArea" class="main-content">
+            <div id="importSection">
+                <h2>Your project is empty</h2>
+                <p style="color: #7f8c8d; margin-bottom: 40px;">Add data to start your analysis workflow</p>
+                <div class="import-options-container">
+                    <div class="import-option" id="excelImportButton"><div class="import-icon"><img src="./images/excel.svg"></div><button class="button">Import from Excel</button></div>
+                    <div class="import-option" id="sqlImportButton"><div class="import-icon"><img src="./images/sql-database.svg"></div><button class="button">Import from SQL</button></div>
+                </div>
+                <a href="presets.html" style="text-decoration: none; margin-top: 30px; display: inline-block;"><p style="color: var(--accent-color); font-size: 1.2rem; font-weight: 600;">Or get data from a preset →</p></a>
+            </div>
+            <div id="dataframeSection" style="display: none; width: 100%; align-items: center; flex-direction: column;">
+                <div class="main-content-header">
+                    <div class="project-title" contenteditable="true">Untitled Project</div>
+                    <button id="saveProjectBtn">Save Project</button>
+                </div>
+                <div class="table-container">
+                    <table id="dynamicTable"><thead></thead><tbody></tbody></table>
+                </div>
+                <div id="pagination-controls" class="pagination-controls" style="display: none;">
+                    <button id="page-first">« First</button>
+                    <button id="page-prev">‹ Prev</button>
+                    <span id="page-info" class="pagination-info">Page 1 of 1</span>
+                    <button id="page-next">Next ›</button>
+                    <button id="page-last">Last »</button>
+                </div>
+                <div style="margin-top: 20px;"><button id="addRow" title="Add Row">+</button><button id="removeLastRow" title="Remove Last Row">-</button><button id="addColumn" title="Add Column">Add Column</button></div>
+                <div id="cards-container"></div>
+            </div>
+        </div>
+        <div class="history-panel">
+            <h3>History</h3>
+            <ul class="history-log"></ul>
+        </div>
+    </div>
+    
+    <!-- DIALOGS -->
+    <div class="dialog-backdrop"></div>
+    <div id="missingValuesDialog" class="dialog"><h3 style="margin-top: 0;">Handle Missing Values</h3><label>Column:</label><select class="column-select"></select><label>Method:</label><div><input type="radio" id="missingRemove" name="missingAction" value="remove" checked><label for="missingRemove">Remove Rows</label></div><div><input type="radio" id="missingImpute" name="missingAction" value="impute"><label for="missingImpute">Impute (Fill)</label></div> <div id="imputationTypeSelection" style="display: none; margin-left: 20px;"><label>Imputation Type:</label><select id="imputationType" class="column-select"><option value="mean">Mean</option><option value="median">Median</option><option value="mode">Mode</option><option value="previous">Previous Value</option> </select> </div><div><input type="radio" id="missingZero" name="missingAction" value="zero"><label for="missingZero">Fill with Zero</label></div><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmMissingValuesBtn">Confirm</button></div></div>
+    <div id="columnActionDialog" class="dialog"><h3 id="columnActionTitle" style="margin-top: 0;"></h3><label>Select Column:</label><select class="column-select"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmColumnActionBtn">Confirm</button></div></div>
+    <div id="multiplyColumnsDialog" class="dialog"><h3 style="margin-top: 0;">Multiply Columns</h3><label>Column 1 (Numeric):</label><select class="column-select numeric-only"></select><label>Column 2 (Numeric):</label><select class="column-select numeric-only"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmMultiplyColumnsBtn">Confirm</button></div></div>
+    <div id="appendStringDialog" class="dialog"><h3 style="margin-top: 0;">Append String</h3><label>Column:</label><select class="column-select"></select><label>String to Add:</label><input type="text" id="appendStringText"><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmAppendStringBtn">Confirm</button></div></div>
+    <div id="duplicateConfirmationDialog" class="dialog"><h3>Remove Duplicates</h3><p>Are you sure you want to remove all duplicate rows from the entire dataset?</p><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmDuplicateBtn">Confirm</button></div></div>
+    <div id="descriptiveStatsDialog" class="dialog"><h3 style="margin-top: 0;">Descriptive Statistics</h3><p>Select a numeric column to analyze.</p><label>Column:</label><select class="column-select numeric-only"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmDescriptiveStatsBtn">Generate</button></div></div>
+    <div id="correlationDialog" class="dialog"><h3 style="margin-top: 0;">Correlation Analysis</h3><p>Select two numeric columns for analysis.</p><label>Column 1:</label><select class="column-select numeric-only"></select><label>Column 2:</label><select class="column-select numeric-only"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmCorrelationBtn">Generate</button></div></div>
+    
+    <div id="knnDialog" class="dialog">
+        <h3 style="margin-top: 0;">KNN Prediction</h3>
+        <p>Train a model and add a new column with predictions for all applicable rows.</p>
+        <label>Feature Columns (Numeric):</label>
+        <select id="knnFeaturesSelect" class="column-select numeric-only" multiple size="4"></select>
+        <label>Target Column (to predict):</label>
+        <select id="knnTargetSelect" class="column-select"></select>
+        <label>Number of Neighbors (K):</label>
+        <input type="number" id="knnKValue" value="5" min="1">
+        <div class="dialog-buttons">
+            <button class="cancelButton">Cancel</button>
+            <button class="confirmButton" id="confirmKnnBtn">Run & Predict</button>
+        </div>
+    </div>
+    
+    <div id="histogramDialog" class="dialog"><h3 style="margin-top: 0;">Create Histogram</h3><p>Select a numeric column to visualize its distribution.</p><label>Column:</label><select class="column-select numeric-only"></select><label>Number of Bins:</label><input type="number" value="10" min="2" id="histogramBins"><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmHistogramBtn">Create</button></div></div>
+    <div id="barChartDialog" class="dialog"><h3 style="margin-top: 0;">Create Bar Chart</h3><label>Category Column:</label><select class="column-select"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmBarChartBtn">Create</button></div></div>
+    <div id="scatterPlotDialog" class="dialog"><h3 style="margin-top: 0;">Create Scatter Plot</h3><label>X-Axis Column (Numeric):</label><select class="column-select numeric-only"></select><label>Y-Axis Column (Numeric):</label><select class="column-select numeric-only"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmScatterPlotBtn">Create</button></div></div>
+    <div id="pieChartDialog" class="dialog"><h3 style="margin-top: 0;">Create Pie Chart</h3><p>Select a categorical column to visualize its composition.</p><label>Column:</label><select class="column-select"></select><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmPieChartBtn">Create</button></div></div>
+    
+    <div id="linearRegressionDialog" class="dialog">
+        <h3 style="margin-top: 0;">Linear Regression</h3>
+        <p>Select an independent (X) and dependent (Y) variable. A new column with predictions will be added.</p>
+        <label>Independent Variable (X-axis):</label>
+        <select class="column-select numeric-only"></select>
+        <label>Dependent Variable (Y-axis):</label>
+        <select class="column-select numeric-only"></select>
+        <button id="viewAdvancedOptionsBtn" style="margin-top: 15px; width: 100%; text-align: center;">View advanced options</button>
+        <div id="advancedOptions" style="display: none; margin-top: 10px;">
+            <h4>Advanced Options (UI Demo)</h4>
+            <label>Polynomial Degree:</label>
+            <input type="number" id="polynomialDegree" value="1" min="1">
+            <label>Regularization Type:</label>
+            <select id="regularizationType">
+                <option value="none">None</option>
+                <option value="lasso">Lasso</option>
+                <option value="ridge">Ridge</option>
+            </select>
+            <button id="optimizeModelBtn" style="margin-top: 10px; width: 100%; text-align: center;">Optimize model</button>
+        </div>
+        <div class="dialog-buttons">
+            <button class="cancelButton">Cancel</button>
+            <button class="confirmButton" id="confirmLinearRegressionBtn">Run</button>
+        </div>
+    </div>
+    
+    <div id="kmeansDialog" class="dialog"><h3 style="margin-top: 0;">K-Means Clustering</h3><p>Group data into K clusters based on selected features.</p><label>Features for Clustering:</label><select class="column-select numeric-only" multiple size="4"></select><label>Number of Clusters (K):</label><input type="number" id="kmeansKValue" value="3" min="2"><div class="dialog-buttons"><button class="cancelButton">Cancel</button><button class="confirmButton" id="confirmKmeansBtn">Run</button></div></div>
+
+    <!-- NEW MODEL DIALOGS -->
+    <div id="logisticRegressionDialog" class="dialog">
+        <h3 style="margin-top: 0;">Logistic Regression</h3>
+        <p>Train a model for binary classification. The target column must have exactly two unique values.</p>
+        <label>Feature Columns (Numeric):</label>
+        <select class="column-select numeric-only" multiple size="4"></select>
+        <label>Target Column (Binary):</label>
+        <select class="column-select"></select>
+        <label>Learning Rate:</label>
+        <input type="number" id="logisticLearningRate" value="0.01" step="0.001">
+        <label>Training Iterations:</label>
+        <input type="number" id="logisticIterations" value="1000" step="100">
+        <div class="dialog-buttons">
+            <button class="cancelButton">Cancel</button>
+            <button class="confirmButton" id="confirmLogisticRegressionBtn">Run & Predict</button>
+        </div>
+    </div>
+
+    <div id="naiveBayesDialog" class="dialog">
+        <h3 style="margin-top: 0;">Gaussian Naive Bayes</h3>
+        <p>Classify data based on probabilities. Works best with numeric features and can handle multiple classes.</p>
+        <label>Feature Columns (Numeric):</label>
+        <select class="column-select numeric-only" multiple size="4"></select>
+        <label>Target/Class Column:</label>
+        <select class="column-select"></select>
+        <div class="dialog-buttons">
+            <button class="cancelButton">Cancel</button>
+            <button class="confirmButton" id="confirmNaiveBayesBtn">Run & Predict</button>
+        </div>
+    </div>
+
+    <script src="Functions.js"></script>
+</body>
+</html>

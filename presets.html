@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="block"><a href="index.html" title="Home"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="icon-text">Home</span></a></div>
+        <div class="block"><a href="newProject.html" title="New Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg><span class="icon-text">New Project</span></a></div>
+        <div class="block"><a href="openProject.html" title="Open Project"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2z"/><path d="M16 11V7a4 4 0 0 0-4-4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span class="icon-text">Open Project</span></a></div>
+    </div>
+
+  <div class="page-wrapper">
+      <div class="main-content centered-page">
+          <h1 style="font-size: 2rem; font-weight: 600;">Select a Preset Project</h1>
+          <p style="color: #7f8c8d; margin-bottom: 20px;">Choose a pre-configured dataset to get started immediately.</p>
+          <hr style="width:50%; margin: 20px auto 40px auto;">
+
+          <div class="flex-container">
+            <div class="preset-card" data-preset="house-prices">
+                <div class="preset-description">Predict house prices based on features like area and bedrooms.</div>
+                <div class="card-button">House Prices</div>
+            </div>
+            <div class="preset-card" data-preset="iris-classification">
+                <div class="preset-description">Classify Iris flower species using sepal and petal measurements.</div>
+                <div class="card-button">Iris Classification</div>
+            </div>
+            <div class="preset-card" data-preset="customer-churn">
+                <div class="preset-description">Analyze customer data to predict churn.</div>
+                <div class="card-button">Customer Churn</div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.preset-card');
+        if (card) {
+            const presetName = card.getAttribute('data-preset');
+            if (presetName) {
+                window.location.href = `newProject.html?preset=${presetName}`;
+            }
+        }
+    });
+  </script>
+</body>
+</html>
